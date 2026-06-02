@@ -7,7 +7,7 @@
 #
 # POSIX /bin/sh compatible (no bashisms).
 
-set -eu
+set -u
 
 # ---- Settings you can tweak (or pass as env vars) --------------------------
 # IMPORTANT: MODEL_ID must match EXACTLY what LM Studio reports. Verify with:
@@ -24,11 +24,11 @@ CONFIG_FILE="${CONFIG_DIR}/opencode.json"
 
 log()  { printf '==> %s\n' "$1"; }
 warn() { printf '[!] %s\n' "$1" >&2; }
+error_exit() { printf '[ERROR] %s\n' "$1" >&2; exit 1; }
 
 # 1. curl is required
 if ! command -v curl >/dev/null 2>&1; then
-  warn "curl is required but not found. Install it and re-run."
-  exit 1
+  error_exit "curl is required but not found. Please install it and re-run this script."
 fi
 
 # 2. Install OpenCode (skip if already present)
@@ -36,7 +36,9 @@ if command -v opencode >/dev/null 2>&1; then
   log "OpenCode already installed: $(opencode --version 2>/dev/null || echo present)"
 else
   log "Installing OpenCode..."
-  curl -fsSL https://opencode.ai/install | bash
+  if ! curl -fsSL https://opencode.ai/install | bash; then
+    error_exit "Failed to install OpenCode via curl. Please check your connection and try again."
+  fi
 fi
 
 # 2b. Make sure this shell can see the binary (installer uses ~/.opencode/bin)
@@ -48,14 +50,16 @@ if ! command -v opencode >/dev/null 2>&1; then
     warn "Add this line to your shell profile (~/.zshrc or ~/.profile):"
     warn '  export PATH="$HOME/.opencode/bin:$PATH"'
   else
-    warn "OpenCode installed but not on PATH. Open a new terminal, then re-run."
-    exit 1
+    error_exit "OpenCode installed but not on PATH. Open a new terminal, then re-run."
   fi
 fi
 
 # 3. Write the LM Studio provider config
 log "Writing config to ${CONFIG_FILE}"
-mkdir -p "${CONFIG_DIR}"
+if ! mkdir -p "${CONFIG_DIR}"; then
+  error_exit "Failed to create directory ${CONFIG_DIR}. Check permissions."
+fi
+
 cat > "${CONFIG_FILE}" <<EOF
 {
   "\$schema": "https://opencode.ai/config.json",
@@ -78,14 +82,19 @@ cat > "${CONFIG_FILE}" <<EOF
 }
 EOF
 
+if [ $? -ne 0 ]; then
+  error_exit "Failed to write configuration file ${CONFIG_FILE}."
+fi
+
 # 4. Warm the provider cache while online.
 #    OpenCode downloads the @ai-sdk/openai-compatible package the first time the
 #    provider runs. Triggering it NOW is what makes the offline session work.
 log "Checking LM Studio at ${BASE_URL} ..."
 if curl -fsS "${BASE_URL}/models" >/dev/null 2>&1; then
   log "LM Studio reachable. Warming OpenCode provider cache..."
-  opencode run -m "lmstudio/${MODEL_ID}" "Respond with the single word: ready" \
-    || warn "Auto warm-up didn't complete — do the manual interactive run below before flying."
+  if ! opencode run -m "lmstudio/${MODEL_ID}" "Respond with the single word: ready"; then
+    warn "Auto warm-up didn't complete — do the manual interactive run below before flying."
+  fi
 else
   warn "LM Studio server not reachable yet."
   warn "Start it: LM Studio -> Developer tab -> load Gemma model -> set server to Running."
