@@ -1,0 +1,18 @@
+# Core API (fastapi[standard] bundles uvicorn, the `fastapi` CLI, pydantic, python-multipart)
+fastapi[standard]
+pydantic-settings
+
+# Data wrangling for measurement / verification data
+polars
+pyarrow
+
+# Dev / test
+httpx
+pytest
+pytest-asyncio
+ruff
+
+# Optional: server-side STATIC chart export (slide / report figures).
+# Uncomment if you want it; kaleido is heavier and occasionally finicky to install.
+# plotly
+# kaleido
