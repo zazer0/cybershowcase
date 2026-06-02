@@ -1,0 +1,15 @@
+# node / sveltekit
+node_modules/
+.svelte-kit/
+build/
+.vite/
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# tooling output
+test-results/
+playwright-report/
+.DS_Store

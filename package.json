@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces && uv sync --directory api --all-groups",
+    "start": "concurrently -n api,web -c blue,green \"uv run --directory api fastapi dev app/main.py\" \"npm run dev --workspace=web\"",
+    "dev": "npm run start",
+    "build": "npm run build --workspace=web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "overrides": {
+    "vite": "^8.0.7",
+    "vite-dev-rpc": "^2.0.0"
+  }
+}

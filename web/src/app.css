@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+:root {
+	--color-cream: #f5f3ec;
+	--color-ink: #1a1a1a;
+	--color-accent: #c9a227;
+	--color-muted: #cfcbc0;
+	--ease-smooth: cubic-bezier(0.2, 0, 0, 1);
+	font-family: 'Inter Variable', system-ui, sans-serif;
+}
+
+body {
+	background-color: var(--color-cream);
+	color: var(--color-ink);
+	margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
