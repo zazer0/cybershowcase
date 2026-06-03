@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 
 ## What this is
 
-**hwverify** — an interview practice scaffold. A Svelte 5 + SvelteKit frontend and FastAPI backend pre-wired and ready to build against, intentionally shipped with no real UI code. Run `sh setup.sh` once (online) to install all deps.
+**pocui** — a showcase project scaffold. A Svelte 5 + SvelteKit frontend and FastAPI backend pre-wired and ready to build against, intentionally shipped with no real UI code. Run `sh setup.sh` once (online) to install all deps.
 
 ## Dev servers
 
