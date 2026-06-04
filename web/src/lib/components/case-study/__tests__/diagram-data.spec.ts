@@ -1,183 +1,111 @@
 import { describe, it, expect } from 'vitest';
 import {
-	NODES,
-	ARCS,
-	getNodeById,
-	getNodePosition,
-	isNodeActive,
-	isArcActive
+	CYBERCLAW_ENTITY,
+	DEVVM_ENTITY,
+	AUTOMATE_LOOP_STAGES,
+	CAMERA_FULL,
+	CAMERA_ZOOM_VM,
+	ENTITIES
 } from '../diagramData.js';
 
-describe('NODES', () => {
-	it('has exactly 5 nodes', () => {
-		expect(NODES).toHaveLength(5);
+describe('CYBERCLAW_ENTITY', () => {
+	it('has the correct id and label', () => {
+		expect(CYBERCLAW_ENTITY.id).toBe('cyberclaw');
+		expect(CYBERCLAW_ENTITY.label).toBe('CYBERCLAW');
 	});
 
-	it('contains all required node IDs', () => {
-		const ids = NODES.map((n) => n.id);
-		expect(ids).toContain('trigger');
-		expect(ids).toContain('orchestrate');
-		expect(ids).toContain('coding-agent');
+	it('has a 3-element position tuple', () => {
+		expect(CYBERCLAW_ENTITY.position).toHaveLength(3);
+		for (const coord of CYBERCLAW_ENTITY.position) {
+			expect(typeof coord).toBe('number');
+		}
+	});
+
+	it('has a 3-element size tuple', () => {
+		expect(CYBERCLAW_ENTITY.size).toHaveLength(3);
+		for (const dim of CYBERCLAW_ENTITY.size) {
+			expect(typeof dim).toBe('number');
+		}
+	});
+
+	it('has a valid borderColor', () => {
+		expect(CYBERCLAW_ENTITY.borderColor).toBe('#C9A227');
+	});
+
+	it('has sub-regions with required fields', () => {
+		expect(CYBERCLAW_ENTITY.subRegions.length).toBeGreaterThan(0);
+		for (const sr of CYBERCLAW_ENTITY.subRegions) {
+			expect(sr.id).toBeTruthy();
+			expect(sr.label).toBeTruthy();
+			expect(typeof sr.x).toBe('number');
+			expect(typeof sr.y).toBe('number');
+			expect(typeof sr.width).toBe('number');
+			expect(typeof sr.height).toBe('number');
+		}
+	});
+});
+
+describe('DEVVM_ENTITY', () => {
+	it('has the correct id and label', () => {
+		expect(DEVVM_ENTITY.id).toBe('devvm');
+		expect(DEVVM_ENTITY.label).toBe('DEV VM');
+	});
+
+	it('has a 3-element position tuple', () => {
+		expect(DEVVM_ENTITY.position).toHaveLength(3);
+		for (const coord of DEVVM_ENTITY.position) {
+			expect(typeof coord).toBe('number');
+		}
+	});
+
+	it('has sub-regions including automate-loop', () => {
+		const ids = DEVVM_ENTITY.subRegions.map((sr) => sr.id);
+		expect(ids).toContain('automate-loop');
+		expect(ids).toContain('cli-agent');
 		expect(ids).toContain('validator');
-		expect(ids).toContain('resolution');
+		expect(ids).toContain('success-badge');
+	});
+});
+
+describe('AUTOMATE_LOOP_STAGES', () => {
+	it('has exactly 3 stages', () => {
+		expect(AUTOMATE_LOOP_STAGES).toHaveLength(3);
 	});
 
-	it('trigger is at top — highest Y position', () => {
-		const trigger = getNodeById('trigger')!;
-		const orchestrate = getNodeById('orchestrate')!;
-		expect(trigger.position[1]).toBeGreaterThan(orchestrate.position[1]);
+	it('contains diagnose, plan, implement in order', () => {
+		expect(AUTOMATE_LOOP_STAGES[0].id).toBe('diagnose');
+		expect(AUTOMATE_LOOP_STAGES[1].id).toBe('plan');
+		expect(AUTOMATE_LOOP_STAGES[2].id).toBe('implement');
 	});
 
-	it('resolution is at bottom — lowest Y position', () => {
-		const resolution = getNodeById('resolution')!;
-		const validator = getNodeById('validator')!;
-		expect(resolution.position[1]).toBeLessThan(validator.position[1]);
-	});
-
-	it('cycle nodes form a triangle layout', () => {
-		const orch = getNodeById('orchestrate')!;
-		const coding = getNodeById('coding-agent')!;
-		const validator = getNodeById('validator')!;
-
-		// Orchestrate is the highest cycle node (top of triangle)
-		expect(orch.position[1]).toBeGreaterThan(coding.position[1]);
-		expect(orch.position[1]).toBeGreaterThan(validator.position[1]);
-
-		// Coding agent is to the right (positive X)
-		expect(coding.position[0]).toBeGreaterThan(0);
-
-		// Validator is to the left (negative X)
-		expect(validator.position[0]).toBeLessThan(0);
-	});
-
-	it('trigger and resolution are marked as IO nodes', () => {
-		expect(getNodeById('trigger')!.isIO).toBe(true);
-		expect(getNodeById('resolution')!.isIO).toBe(true);
-	});
-
-	it('cycle nodes are not marked as IO', () => {
-		expect(getNodeById('orchestrate')!.isIO).toBeFalsy();
-		expect(getNodeById('coding-agent')!.isIO).toBeFalsy();
-		expect(getNodeById('validator')!.isIO).toBeFalsy();
-	});
-
-	it('positions are [number, number, number] tuples', () => {
-		for (const node of NODES) {
-			expect(node.position).toHaveLength(3);
-			for (const coord of node.position) {
-				expect(typeof coord).toBe('number');
-			}
+	it('each stage has a label and description', () => {
+		for (const stage of AUTOMATE_LOOP_STAGES) {
+			expect(stage.label).toBeTruthy();
+			expect(stage.description).toBeTruthy();
 		}
 	});
 });
 
-describe('ARCS', () => {
-	it('has exactly 3 cycle arcs', () => {
-		expect(ARCS).toHaveLength(3);
+describe('camera presets', () => {
+	it('CAMERA_FULL has 3-element position and lookAt', () => {
+		expect(CAMERA_FULL.position).toHaveLength(3);
+		expect(CAMERA_FULL.lookAt).toHaveLength(3);
 	});
 
-	it('contains all required arc IDs', () => {
-		const ids = ARCS.map((a) => a.id);
-		expect(ids).toContain('orchestrate-to-coding');
-		expect(ids).toContain('coding-to-validator');
-		expect(ids).toContain('validator-to-orchestrate');
+	it('CAMERA_ZOOM_VM has 3-element position and lookAt', () => {
+		expect(CAMERA_ZOOM_VM.position).toHaveLength(3);
+		expect(CAMERA_ZOOM_VM.lookAt).toHaveLength(3);
 	});
 
-	it('all arc fromId and toId reference valid node IDs', () => {
-		const nodeIds = new Set(NODES.map((n) => n.id));
-		for (const arc of ARCS) {
-			expect(nodeIds.has(arc.fromId)).toBe(true);
-			expect(nodeIds.has(arc.toId)).toBe(true);
-		}
-	});
-
-	it('arcs form a complete cycle: orch → coding → validator → orch', () => {
-		const orch2coding = ARCS.find((a) => a.id === 'orchestrate-to-coding')!;
-		const coding2val = ARCS.find((a) => a.id === 'coding-to-validator')!;
-		const val2orch = ARCS.find((a) => a.id === 'validator-to-orchestrate')!;
-
-		expect(orch2coding.fromId).toBe('orchestrate');
-		expect(orch2coding.toId).toBe('coding-agent');
-
-		expect(coding2val.fromId).toBe('coding-agent');
-		expect(coding2val.toId).toBe('validator');
-
-		expect(val2orch.fromId).toBe('validator');
-		expect(val2orch.toId).toBe('orchestrate');
-	});
-
-	it('arcs chain together: toId of one matches fromId of next', () => {
-		const orch2coding = ARCS.find((a) => a.id === 'orchestrate-to-coding')!;
-		const coding2val = ARCS.find((a) => a.id === 'coding-to-validator')!;
-		const val2orch = ARCS.find((a) => a.id === 'validator-to-orchestrate')!;
-
-		expect(orch2coding.toId).toBe(coding2val.fromId);
-		expect(coding2val.toId).toBe(val2orch.fromId);
-		expect(val2orch.toId).toBe(orch2coding.fromId);
-	});
-
-	it('control points are [number, number, number] tuples', () => {
-		for (const arc of ARCS) {
-			expect(arc.controlPoint).toHaveLength(3);
-			for (const coord of arc.controlPoint) {
-				expect(typeof coord).toBe('number');
-			}
-		}
+	it('CAMERA_ZOOM_VM looks at the DevVM entity X position', () => {
+		expect(CAMERA_ZOOM_VM.lookAt[0]).toBe(DEVVM_ENTITY.position[0]);
 	});
 });
 
-describe('getNodeById', () => {
-	it('returns the correct node for a known ID', () => {
-		const node = getNodeById('orchestrate');
-		expect(node).toBeDefined();
-		expect(node!.id).toBe('orchestrate');
-	});
-
-	it('returns undefined for an unknown ID', () => {
-		expect(getNodeById('nonexistent')).toBeUndefined();
-	});
-});
-
-describe('getNodePosition', () => {
-	it('returns the correct position for a known node', () => {
-		expect(getNodePosition('orchestrate')).toEqual([0, 1, 0]);
-		expect(getNodePosition('trigger')).toEqual([0, 2.2, 0]);
-		expect(getNodePosition('resolution')).toEqual([0, -2.2, 0]);
-		expect(getNodePosition('coding-agent')).toEqual([1.3, -0.8, 0]);
-		expect(getNodePosition('validator')).toEqual([-1.5, -0.8, 0]);
-	});
-
-	it('returns [0, 0, 0] for an unknown node ID', () => {
-		expect(getNodePosition('unknown')).toEqual([0, 0, 0]);
-	});
-});
-
-describe('isNodeActive', () => {
-	it('returns true when nodeId matches activeNodeId', () => {
-		expect(isNodeActive('orchestrate', 'orchestrate')).toBe(true);
-		expect(isNodeActive('trigger', 'trigger')).toBe(true);
-	});
-
-	it('returns false when nodeId does not match activeNodeId', () => {
-		expect(isNodeActive('validator', 'orchestrate')).toBe(false);
-		expect(isNodeActive('coding-agent', 'trigger')).toBe(false);
-	});
-});
-
-describe('isArcActive', () => {
-	it('returns true when arcId matches activeArcId', () => {
-		expect(isArcActive('orchestrate-to-coding', 'orchestrate-to-coding')).toBe(true);
-	});
-
-	it('returns false when arcId does not match activeArcId', () => {
-		expect(isArcActive('orchestrate-to-coding', 'coding-to-validator')).toBe(false);
-	});
-
-	it('returns false when activeArcId is null', () => {
-		expect(isArcActive('orchestrate-to-coding', null)).toBe(false);
-	});
-
-	it('returns false for empty string activeArcId', () => {
-		expect(isArcActive('orchestrate-to-coding', '')).toBe(false);
+describe('ENTITIES', () => {
+	it('contains both entities', () => {
+		expect(ENTITIES).toHaveLength(2);
+		expect(ENTITIES[0]).toBe(CYBERCLAW_ENTITY);
+		expect(ENTITIES[1]).toBe(DEVVM_ENTITY);
 	});
 });
