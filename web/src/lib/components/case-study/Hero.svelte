@@ -4,7 +4,7 @@
 		title,
 		subtitle,
 		features,
-		scrollHint,
+		scrollHint
 	}: {
 		tagline: string;
 		title: string;

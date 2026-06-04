@@ -93,7 +93,7 @@
 		flex: 1;
 		height: 1px;
 		border: none;
-		background: var(--color-muted, #CFCBC0);
+		background: var(--color-muted, #cfcbc0);
 	}
 
 	.name-tag {
@@ -102,21 +102,21 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
-		color: var(--color-accent, #C9A227);
+		color: var(--color-accent, #c9a227);
 	}
 
 	/* Card body */
 	.card-body {
 		background: rgba(255, 255, 255, 0.5);
-		border: 1px solid #CFCBC0;
+		border: 1px solid #cfcbc0;
 		border-radius: 10px;
 		padding: 26px 28px;
 		box-shadow: 0 2px 10px rgba(26, 26, 26, 0.05);
 	}
 
 	.card-body.success {
-		background: #1A1A1A;
-		border: 2px solid #C9A227;
+		background: #1a1a1a;
+		border: 2px solid #c9a227;
 		box-shadow: 0 4px 28px rgba(201, 162, 39, 0.14);
 	}
 
@@ -126,7 +126,7 @@
 		font-weight: 700;
 		line-height: 1.2;
 		margin: 0 0 18px 0;
-		color: var(--color-ink, #1A1A1A);
+		color: var(--color-ink, #1a1a1a);
 	}
 
 	.card-body.success h3 {
@@ -153,8 +153,8 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
-		background: #C9A227;
-		color: #1A1A1A;
+		background: #c9a227;
+		color: #1a1a1a;
 		padding: 2px 7px;
 		border-radius: 3px;
 		white-space: nowrap;
@@ -178,7 +178,7 @@
 		font-size: 11px;
 		line-height: 1.75;
 		background: rgba(26, 26, 26, 0.04);
-		border-left: 2.5px solid #C9A227;
+		border-left: 2.5px solid #c9a227;
 		padding: 11px 14px;
 		border-radius: 0 4px 4px 0;
 		opacity: 0.65;
@@ -208,7 +208,7 @@
 	.stat-value {
 		font-weight: 700;
 		font-size: 28px;
-		color: #C9A227;
+		color: #c9a227;
 		line-height: 1;
 	}
 

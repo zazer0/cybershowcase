@@ -87,11 +87,8 @@
 				<span id="current-step-label" class="step-label">{stepLabel}</span>
 
 				<div class="progress-dots">
-					{#each steps as _, i (i)}
-						<span
-							class="dot"
-							class:active={i === activeStepIndex}
-						></span>
+					{#each steps as _step, i (i)}
+						<span class="dot" class:active={i === activeStepIndex}></span>
 					{/each}
 				</div>
 
@@ -167,7 +164,7 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.12em;
-		color: var(--color-accent, #C9A227);
+		color: var(--color-accent, #c9a227);
 		text-align: center;
 		margin-bottom: 8px;
 	}
@@ -185,14 +182,14 @@
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
-		background: var(--color-muted, #CFCBC0);
+		background: var(--color-muted, #cfcbc0);
 		transition:
 			background 450ms var(--ease-smooth, cubic-bezier(0.25, 0.1, 0.25, 1)),
 			transform 450ms var(--ease-smooth, cubic-bezier(0.25, 0.1, 0.25, 1));
 	}
 
 	.dot.active {
-		background: var(--color-accent, #C9A227);
+		background: var(--color-accent, #c9a227);
 		transform: scale(1.55);
 	}
 
@@ -203,7 +200,7 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.14em;
-		color: var(--color-muted, #CFCBC0);
+		color: var(--color-muted, #cfcbc0);
 		margin-top: 14px;
 		text-align: center;
 	}

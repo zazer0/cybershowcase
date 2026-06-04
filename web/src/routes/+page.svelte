@@ -46,7 +46,7 @@
 			nameTag: 'Diagnosis & Fix',
 			heading: 'Automate_loop.sh executing its 3-stage process',
 			description:
-				'Calling automate_loop.sh with relevant paths + a succinct summary of the prior agent\'s goal',
+				"Calling automate_loop.sh with relevant paths + a succinct summary of the prior agent's goal",
 			transcript:
 				'$ ./automate_loop.sh --goal "Fix e2e step 13" --context "Root cause: timeout in auth-proxy"\n[Plan]: 1. Update proxy timeout to 30s  |  2. Verify connectivity  |  3. Run test',
 			activeNodeId: 'coding-agent',
@@ -68,10 +68,10 @@
 			id: 'success',
 			stepTag: 'Output',
 			nameTag: 'Success',
-			heading: '"Successfully completed 13/13 exploit chain steps after 6+ hours of autonomous operation"',
+			heading:
+				'"Successfully completed 13/13 exploit chain steps after 6+ hours of autonomous operation"',
 			description: 'Agent delivers complete success without human intervention',
-			transcript:
-				'Total Duration: 6h 24m\nIterations: 11 loops\nFinal Status: ALL TESTS PASSED',
+			transcript: 'Total Duration: 6h 24m\nIterations: 11 loops\nFinal Status: ALL TESTS PASSED',
 			activeNodeId: 'resolution',
 			activeArcId: null,
 			isSuccess: true,
@@ -107,7 +107,7 @@
 <style>
 	.page {
 		min-height: 100vh;
-		background: var(--color-cream, #F5F3EC);
-		color: var(--color-ink, #1A1A1A);
+		background: var(--color-cream, #f5f3ec);
+		color: var(--color-ink, #1a1a1a);
 	}
 </style>
