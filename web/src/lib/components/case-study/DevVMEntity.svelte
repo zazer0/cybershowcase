@@ -38,6 +38,21 @@
 		activeRegionId === 'success-badge' ? 0.7 + 0.3 * Math.sin(badgePulseTime * 3) : 0
 	);
 
+	// Sequential stage lighting for automate_loop expanded view
+	let stageHighlightTime = $state(0);
+	const STAGE_DURATION = 1.2; // seconds per stage
+	const STAGE_COUNT = AUTOMATE_LOOP_STAGES.length;
+	let activeStageIndex = $derived(
+		isZoomed ? Math.floor(stageHighlightTime / STAGE_DURATION) % STAGE_COUNT : -1
+	);
+
+	// Reset stage highlight time when leaving zoomed view
+	$effect(() => {
+		if (!isZoomed) {
+			stageHighlightTime = 0;
+		}
+	});
+
 	useTask((delta) => {
 		const dt = Math.min(delta, 0.1);
 		currentEmissive += (targetEmissive - currentEmissive) * SPRING * dt;
@@ -46,6 +61,10 @@
 			badgePulseTime += dt;
 		} else {
 			badgePulseTime = 0;
+		}
+		// Increment stage highlight timer when zoomed
+		if (isZoomed) {
+			stageHighlightTime += dt;
 		}
 	});
 
@@ -120,7 +139,7 @@
 				<div class="loop-expanded" class:visible={isZoomed}>
 					<div class="stages-row">
 						{#each AUTOMATE_LOOP_STAGES as stage, i (stage.id)}
-							<div class="stage-box">
+							<div class="stage-box" class:stage-active={activeStageIndex === i}>
 								<span class="stage-label">{stage.label}</span>
 								<span class="stage-desc">{stage.description}</span>
 							</div>
@@ -246,12 +265,25 @@
 		min-width: 0;
 	}
 
+	.stage-box.stage-active {
+		border-color: #c9a227;
+		background-color: rgba(201, 162, 39, 0.12);
+		transition:
+			border-color 200ms ease,
+			background-color 200ms ease;
+	}
+
+	.stage-box.stage-active .stage-label {
+		color: #c9a227;
+	}
+
 	.stage-label {
 		font-size: 7px;
 		font-weight: 700;
 		color: #1a1a1a;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		transition: color 200ms ease;
 	}
 
 	.stage-desc {

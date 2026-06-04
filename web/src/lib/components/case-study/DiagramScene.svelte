@@ -33,6 +33,28 @@
 
 	let cameraRef: PerspectiveCamera | undefined = $state();
 
+	// ── Validator converging particles (Step 3) ──────────────────────
+	const VALIDATOR_PARTICLE_COUNT = 6;
+	const VALIDATOR_CENTER: [number, number, number] = [1.8, -0.7, 0.16];
+	const SPIRAL_RADIUS = 0.8;
+	const SPIRAL_DURATION = 2.5; // seconds per full spiral cycle
+
+	let validatorTime = $state(0);
+	let validatorParticleOpacity = $state(0);
+	let targetValidatorOpacity = $derived(activeRegionId === 'validator' ? 0.85 : 0);
+
+	// Compute particle positions from validatorTime
+	let validatorParticles: [number, number, number][] = $state(
+		Array.from({ length: VALIDATOR_PARTICLE_COUNT }, () => [0, 0, 0] as [number, number, number])
+	);
+
+	// Reset validator time when leaving validator step
+	$effect(() => {
+		if (activeRegionId !== 'validator') {
+			validatorTime = 0;
+		}
+	});
+
 	useTask((delta) => {
 		const dt = Math.min(delta, 0.1);
 		for (let i = 0; i < 3; i++) {
@@ -42,6 +64,26 @@
 		if (cameraRef) {
 			cameraRef.position.set(camPos[0], camPos[1], camPos[2]);
 			cameraRef.lookAt(lookAtPos[0], lookAtPos[1], lookAtPos[2]);
+		}
+
+		// Spring-animate validator particle opacity
+		validatorParticleOpacity += (targetValidatorOpacity - validatorParticleOpacity) * SPRING * dt;
+
+		// Animate validator particles when active
+		if (activeRegionId === 'validator') {
+			validatorTime += dt;
+			for (let i = 0; i < VALIDATOR_PARTICLE_COUNT; i++) {
+				const phase = (i / VALIDATOR_PARTICLE_COUNT) * Math.PI * 2;
+				const t = ((validatorTime / SPIRAL_DURATION) + i / VALIDATOR_PARTICLE_COUNT) % 1;
+				// Spiral inward: radius shrinks from SPIRAL_RADIUS to 0 as t goes 0→1
+				const r = SPIRAL_RADIUS * (1 - t);
+				const angle = phase + t * Math.PI * 4; // 2 full rotations per cycle
+				validatorParticles[i] = [
+					VALIDATOR_CENTER[0] + r * Math.cos(angle),
+					VALIDATOR_CENTER[1] + r * Math.sin(angle),
+					VALIDATOR_CENTER[2]
+				];
+			}
 		}
 	});
 </script>
@@ -91,3 +133,18 @@
 	isActive={activeEntityId === 'cyberclaw' || activeEntityId === 'both'}
 	showReturnPath={activeRegionId === 'validator' || activeRegionId === 'success-badge'}
 />
+
+<!-- Validator converging particles (Step 3) -->
+{#each validatorParticles as pos, i (i)}
+	<T.Mesh position={pos}>
+		<T.SphereGeometry args={[0.03, 12, 12]} />
+		<T.MeshStandardMaterial
+			color="#C9A227"
+			emissive="#C9A227"
+			emissiveIntensity={0.8}
+			transparent
+			opacity={validatorParticleOpacity}
+			depthWrite={false}
+		/>
+	</T.Mesh>
+{/each}
