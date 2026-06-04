@@ -29,6 +29,7 @@ Vite proxies `/api/*` → `:8000`, so fetch calls in the browser go through the 
 
 ```sh
 npm start                # run api + web dev servers in parallel
+npm run dev              # alias for npm start
 npm run install:all      # install all deps (npm workspaces + api pip)
 npm run build            # production build (web only)
 ```
