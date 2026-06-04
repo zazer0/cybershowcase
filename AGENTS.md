@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
+This file provides guidance to coding agents, when working with this repository.
 
 ## What this is
 
@@ -93,3 +93,14 @@ The API has no database — `GET /api/metrics` returns stub data (Polars/pyarrow
 - All content via props — no shared data files, no cross-component imports (except ScrollStory importing its children)
 - Components are intentionally loose-coupled for future redesign/swap-out
 - Step data (`StepData[]` interface) defined in `+page.svelte`, flows down through props
+
+
+## Note on Threlte
+
+This project uses Threlte v8. Threlte v8 requires Svelte 5.
+
+For Threlte code:
+- Use current Threlte v8 docs before editing Canvas, T, GLTF, events, snippets, plugins, or Rapier.
+- Use Svelte 5 callback/event props, not legacy on: events.
+- Use snippets/render patterns, not slot props.
+- After 3D changes, run the app and visually inspect the scene.
