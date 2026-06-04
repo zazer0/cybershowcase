@@ -11,6 +11,8 @@
 		transcript: string;
 		activeNodeId: string;
 		activeArcId: string | null;
+		activeEntityId?: 'cyberclaw' | 'devvm' | 'both';
+		activeRegionId?: string | null;
 		isSuccess?: boolean;
 		stats?: Array<{ label: string; value: string }>;
 	}
@@ -26,7 +28,9 @@
 			transcript:
 				'[Internal Thought]: I must prioritize the e2e test failure. Before modifying any code, I will verify the environment constraints to ensure no forbidden files are edited...',
 			activeNodeId: 'trigger',
-			activeArcId: null
+			activeArcId: null,
+			activeEntityId: 'cyberclaw',
+			activeRegionId: null
 		},
 		{
 			id: 'step-1',
@@ -38,7 +42,9 @@
 			transcript:
 				'[Log]: Analyzing session_logs.jsonl... Previous attempt failed at step 12/13. No commit created to avoid pollution. Resetting infra state...',
 			activeNodeId: 'orchestrate',
-			activeArcId: 'orchestrate-to-coding'
+			activeArcId: 'orchestrate-to-coding',
+			activeEntityId: 'cyberclaw',
+			activeRegionId: 'orchestrator'
 		},
 		{
 			id: 'step-2',
@@ -50,7 +56,9 @@
 			transcript:
 				'$ ./automate_loop.sh --goal "Fix e2e step 13" --context "Root cause: timeout in auth-proxy"\n[Plan]: 1. Update proxy timeout to 30s  |  2. Verify connectivity  |  3. Run test',
 			activeNodeId: 'coding-agent',
-			activeArcId: 'coding-to-validator'
+			activeArcId: 'coding-to-validator',
+			activeEntityId: 'devvm',
+			activeRegionId: 'automate-loop'
 		},
 		{
 			id: 'step-3',
@@ -62,7 +70,9 @@
 			transcript:
 				'[Validator]: Executing solution.sh...\n[Result]: Step 13/13 PASSED — Final state validated.',
 			activeNodeId: 'validator',
-			activeArcId: 'validator-to-orchestrate'
+			activeArcId: 'validator-to-orchestrate',
+			activeEntityId: 'devvm',
+			activeRegionId: 'validator'
 		},
 		{
 			id: 'success',
@@ -74,6 +84,8 @@
 			transcript: 'Total Duration: 6h 24m\nIterations: 11 loops\nFinal Status: ALL TESTS PASSED',
 			activeNodeId: 'resolution',
 			activeArcId: null,
+			activeEntityId: 'both',
+			activeRegionId: 'success-badge',
 			isSuccess: true,
 			stats: [
 				{ label: 'Tests Passed', value: '13/13' },

@@ -12,6 +12,8 @@
 		transcript: string;
 		activeNodeId: string;
 		activeArcId: string | null;
+		activeEntityId?: 'cyberclaw' | 'devvm' | 'both';
+		activeRegionId?: string | null;
 		isSuccess?: boolean;
 		stats?: Array<{ label: string; value: string }>;
 	}
@@ -30,6 +32,8 @@
 
 	let activeNodeId = $derived(steps[activeStepIndex].activeNodeId);
 	let activeArcId = $derived(steps[activeStepIndex].activeArcId);
+	let activeEntityId = $derived(steps[activeStepIndex]?.activeEntityId ?? 'cyberclaw');
+	let activeRegionId = $derived(steps[activeStepIndex]?.activeRegionId ?? null);
 	let stepLabel = $derived(`${steps[activeStepIndex].stepTag} — ${steps[activeStepIndex].nameTag}`);
 
 	onMount(() => {
@@ -99,7 +103,7 @@
 				</div>
 
 				<div class="diagram-3d-wrapper">
-					<CycleDiagram3D {activeNodeId} {activeArcId} />
+					<CycleDiagram3D {activeNodeId} {activeArcId} {activeEntityId} {activeRegionId} />
 				</div>
 
 				<span class="footer-label">System Architecture</span>

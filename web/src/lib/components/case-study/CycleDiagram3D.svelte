@@ -5,10 +5,14 @@
 
 	let {
 		activeNodeId,
-		activeArcId
+		activeArcId,
+		activeEntityId: _activeEntityId,
+		activeRegionId: _activeRegionId
 	}: {
 		activeNodeId: string;
 		activeArcId: string | null;
+		activeEntityId?: 'cyberclaw' | 'devvm' | 'both';
+		activeRegionId?: string | null;
 	} = $props();
 
 	/**
