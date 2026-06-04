@@ -41,11 +41,22 @@
 		"vitest": "^4.1.3"
 	},
 	"dependencies": {
+		"@dimforge/rapier3d-compat": "^0.19.3",
 		"@fontsource-variable/inter": "^5.2.8",
 		"@fontsource/jetbrains-mono": "^5.2.8",
 		"@lucide/svelte": "^1.17.0",
+		"@theatre/core": "^0.7.2",
+		"@theatre/studio": "^0.7.2",
+		"@threlte/core": "^8.5.16",
+		"@threlte/extras": "^9.20.1",
+		"@threlte/flex": "^2.2.2",
+		"@threlte/rapier": "^3.5.0",
+		"@threlte/studio": "^0.4.3",
+		"@threlte/theatre": "^3.2.2",
+		"@types/three": "^0.184.1",
 		"@xyflow/svelte": "^1.6.0",
 		"chart.js": "^4.5.1",
-		"layerchart": "^1.0.13"
+		"layerchart": "^1.0.13",
+		"three": "^0.184.0"
 	}
 }

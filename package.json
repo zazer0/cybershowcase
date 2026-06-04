@@ -9,19 +9,6 @@
     "dev": "npm run start",
     "build": "npm run build --workspace=web"
   },
-  "dependencies": {
-    "@dimforge/rapier3d-compat": "^0.19.3",
-    "@theatre/core": "^0.7.2",
-    "@theatre/studio": "^0.7.2",
-    "@threlte/core": "^8.5.16",
-    "@threlte/extras": "^9.20.1",
-    "@threlte/flex": "^2.2.2",
-    "@threlte/rapier": "^3.5.0",
-    "@threlte/studio": "^0.4.3",
-    "@threlte/theatre": "^3.2.2",
-    "@types/three": "^0.184.1",
-    "three": "^0.184.0"
-  },
   "devDependencies": {
     "concurrently": "^9.2.1"
   }
