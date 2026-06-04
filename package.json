@@ -1,9 +1,12 @@
 {
   "private": true,
-  "workspaces": ["web"],
+  "workspaces": [
+    "web"
+  ],
   "scripts": {
-    "start": "npm run dev --workspace=web",
-    "dev": "npm run dev --workspace=web",
+    "install:all": "npm install --workspaces && uv pip install -r api/requirements.txt --python api/.venv/bin/python",
+    "start": "concurrently -n api,web -c blue,green \"uv run --directory api fastapi dev app/main.py\" \"npm run dev --workspace=web\"",
+    "dev": "npm run start",
     "build": "npm run build --workspace=web"
   },
   "dependencies": {
@@ -18,5 +21,8 @@
     "@threlte/theatre": "^3.2.2",
     "@types/three": "^0.184.1",
     "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
