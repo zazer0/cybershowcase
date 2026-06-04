@@ -6,8 +6,8 @@
 	let {
 		activeNodeId,
 		activeArcId,
-		activeEntityId: _activeEntityId,
-		activeRegionId: _activeRegionId
+		activeEntityId,
+		activeRegionId
 	}: {
 		activeNodeId: string;
 		activeArcId: string | null;
@@ -31,7 +31,7 @@
 -->
 <div class="canvas-wrapper">
 	<Canvas {createRenderer}>
-		<DiagramScene {activeNodeId} {activeArcId} />
+		<DiagramScene {activeNodeId} {activeArcId} {activeEntityId} {activeRegionId} />
 	</Canvas>
 </div>
 
