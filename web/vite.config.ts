@@ -10,6 +10,11 @@ export default defineConfig({
 			'/api': 'http://localhost:8000'
 		}
 	},
+	ssr: {
+		// Three.js and troika-three-text are ESM-only; bundle them for SSR
+		// instead of treating as externals to prevent SvelteKit SSR errors.
+		noExternal: ['three', 'troika-three-text']
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

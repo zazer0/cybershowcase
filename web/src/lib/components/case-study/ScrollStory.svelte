@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import CycleDiagram from './CycleDiagram.svelte';
+	import CycleDiagram3D from './CycleDiagram3D.svelte';
 	import StepCard from './StepCard.svelte';
 
 	interface StepData {
@@ -20,7 +20,8 @@
 
 	let activeStepIndex = $state(0);
 	let cardVisible = $state<boolean[]>([]);
-	let cardElements: HTMLDivElement[] = [];
+	let sentinelElements: HTMLDivElement[] = [];
+	let mobileCardElements: HTMLDivElement[] = [];
 
 	$effect(() => {
 		const len = steps.length;
@@ -36,7 +37,7 @@
 			(entries) => {
 				for (const entry of entries) {
 					if (entry.isIntersecting) {
-						const index = cardElements.indexOf(entry.target as HTMLDivElement);
+						const index = sentinelElements.indexOf(entry.target as HTMLDivElement);
 						if (index !== -1) {
 							activeStepIndex = index;
 						}
@@ -53,7 +54,7 @@
 			(entries) => {
 				for (const entry of entries) {
 					if (entry.isIntersecting) {
-						const index = cardElements.indexOf(entry.target as HTMLDivElement);
+						const index = mobileCardElements.indexOf(entry.target as HTMLDivElement);
 						if (index !== -1) {
 							cardVisible[index] = true;
 						}
@@ -65,9 +66,14 @@
 			}
 		);
 
-		for (const el of cardElements) {
+		for (const el of sentinelElements) {
 			if (el) {
 				centerObserver.observe(el);
+			}
+		}
+
+		for (const el of mobileCardElements) {
+			if (el) {
 				fadeObserver.observe(el);
 			}
 		}
@@ -92,7 +98,9 @@
 					{/each}
 				</div>
 
-				<CycleDiagram {activeNodeId} {activeArcId} />
+				<div class="diagram-3d-wrapper">
+					<CycleDiagram3D {activeNodeId} {activeArcId} />
+				</div>
 
 				<span class="footer-label">System Architecture</span>
 			</div>
@@ -100,28 +108,56 @@
 
 		<!-- Right column: scrolling step cards -->
 		<div class="right-column">
-			{#each steps as step, i (step.id)}
-				<div class="step-wrapper" bind:this={cardElements[i]}>
-					<StepCard
-						stepTag={step.stepTag}
-						nameTag={step.nameTag}
-						heading={step.heading}
-						description={step.description}
-						transcript={step.transcript}
-						visible={cardVisible[i]}
-						isSuccess={step.isSuccess}
-						stats={step.stats}
-					/>
+			<!-- Mobile: traditional stacked cards with scroll-in fade -->
+			<div class="mobile-cards">
+				{#each steps as step, i (step.id)}
+					<div class="step-wrapper" bind:this={mobileCardElements[i]}>
+						<StepCard
+							stepTag={step.stepTag}
+							nameTag={step.nameTag}
+							heading={step.heading}
+							description={step.description}
+							transcript={step.transcript}
+							visible={cardVisible[i]}
+							isSuccess={step.isSuccess}
+							stats={step.stats}
+						/>
+					</div>
+				{/each}
+			</div>
+
+			<!-- Desktop: sentinel-driven sticky single card -->
+			<div class="desktop-story">
+				<div class="steps-track">
+					{#each steps as step, i (step.id)}
+						<div class="scroll-sentinel" bind:this={sentinelElements[i]}></div>
+					{/each}
 				</div>
-			{/each}
+
+				<div class="sticky-card-container">
+					{#key activeStepIndex}
+						<div class="card-animate-wrapper">
+							<StepCard
+								stepTag={steps[activeStepIndex].stepTag}
+								nameTag={steps[activeStepIndex].nameTag}
+								heading={steps[activeStepIndex].heading}
+								description={steps[activeStepIndex].description}
+								transcript={steps[activeStepIndex].transcript}
+								visible={true}
+								isSuccess={steps[activeStepIndex].isSuccess}
+								stats={steps[activeStepIndex].stats}
+							/>
+						</div>
+					{/key}
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
 
 <style>
 	.scroll-story {
-		max-width: 960px;
-		margin: 0 auto;
+		width: 100%;
 		padding: 0 1.5rem;
 	}
 
@@ -133,12 +169,18 @@
 		display: none;
 	}
 
-	.right-column {
+	.mobile-cards {
+		display: block;
 		padding: 3rem 0;
+	}
+
+	.desktop-story {
+		display: none;
 	}
 
 	.step-wrapper {
 		margin-bottom: 5rem;
+		max-width: none;
 	}
 
 	.step-wrapper:last-child {
@@ -152,9 +194,9 @@
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: center;
-		padding: 1.5rem 0.5rem 1.5rem 0;
+		padding: 1.5rem 0.5rem 1.5rem 1.5rem;
 	}
 
 	/* Step label */
@@ -205,16 +247,73 @@
 		text-align: center;
 	}
 
-	/* Desktop: 2-column grid */
+	/* Desktop: 2fr/3fr grid — diagram left, single step card right */
 	@media (min-width: 1024px) {
 		.grid-layout {
 			display: grid;
-			grid-template-columns: 4fr 8fr;
+			grid-template-columns: 2fr 3fr;
 			gap: 0;
 		}
 
 		.left-column {
 			display: block;
 		}
+
+		.mobile-cards {
+			display: none;
+		}
+
+		.desktop-story {
+			display: grid;
+			grid-template-columns: 1fr;
+		}
+
+		.steps-track,
+		.sticky-card-container {
+			grid-column: 1;
+			grid-row: 1;
+		}
+
+		.scroll-sentinel {
+			height: 100vh;
+		}
+
+		.scroll-sentinel:last-child {
+			height: 50vh;
+		}
+
+		.sticky-card-container {
+			position: sticky;
+			top: 0;
+			height: 100vh;
+			display: flex;
+			align-items: center;
+			padding: 0 2rem;
+			pointer-events: none;
+		}
+
+		.card-animate-wrapper {
+			pointer-events: auto;
+			width: 100%;
+			animation: cardFadeIn 700ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+		}
+
+		@keyframes cardFadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(22px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	}
+
+	/* 3D diagram fills remaining flex space in the sticky container */
+	.diagram-3d-wrapper {
+		flex: 1;
+		min-height: 0;
+		width: 100%;
 	}
 </style>
