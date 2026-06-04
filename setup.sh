@@ -39,8 +39,7 @@ fi
 note "Setting up FastAPI backend (api/.venv)"
 cd "$SCRIPT_DIR/api"
 uv python install 3.12 || warn "Could not pre-install Python 3.12 via uv; using an available interpreter."
-uv venv --python 3.12 || uv venv
-uv pip install -r requirements.txt
+uv sync --all-groups
 
 # ------------------------------------------------------------------- done
 note "Done. All dependencies are cached locally."
