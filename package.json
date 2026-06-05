@@ -15,5 +15,8 @@
   "overrides": {
     "vite": "^8.0.7",
     "vite-dev-rpc": "^2.0.0"
+  },
+  "dependencies": {
+    "playwright": "^1.60.0"
   }
 }

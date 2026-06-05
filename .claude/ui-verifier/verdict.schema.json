@@ -15,7 +15,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["criterion", "explanation"],
+        "required": ["criterion", "explanation", "viewport"],
         "properties": {
           "criterion": {
             "type": "string",
@@ -29,7 +29,8 @@
             "type": "string",
             "description": "Which viewport the failure was observed in, if viewport-specific"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "description": "Empty array when pass is true"
     }
