@@ -162,7 +162,7 @@
 			text-transform: uppercase;
 			letter-spacing: 0.12em;
 			color: {COLOR_INACTIVE};
-			opacity: {isActive ? 0.5 : 0};
+			opacity: {isActive ? 0.5 : 0.3};
 			transition: opacity 0.4s ease;
 			white-space: nowrap;
 			pointer-events: none;
