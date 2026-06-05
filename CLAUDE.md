@@ -71,3 +71,30 @@ npm workspaces monorepo — root orchestrates `web/` (SvelteKit) and `api/` (Fas
 - **Vitest**: `requireAssertions: true` — every test must contain at least one assertion. Node environment. Tests match `src/**/*.{test,spec}.{js,ts}`.
 - **Playwright**: matches `**/*.e2e.{ts,js}`. Builds the app then runs preview server on `:4173`.
 - **ESLint**: unused vars use `_` prefix pattern (`varsIgnorePattern: '^_'`, `argsIgnorePattern: '^_'`).
+
+## UI Verification Contract
+
+When completing any UI task, you MUST end your final message with a UI_VERIFICATION_CONTRACT block.
+This triggers automated visual verification via an independent judge.
+If verification fails, you will receive specific failures and must fix before stopping.
+If you omit the contract, no verification occurs and visual bugs may go undetected.
+
+Format:
+```
+UI_VERIFICATION_CONTRACT
+task: <one-line description of what was implemented>
+routes:
+  - <full URL, e.g. http://localhost:5173/pricing>
+viewports:
+  - <WIDTHxHEIGHT, e.g. 1440x900>
+  - <WIDTHxHEIGHT, e.g. 390x844>
+acceptance:
+  - <visually verifiable criterion>
+  - <another criterion>
+```
+
+Rules:
+- `task` — required, single line
+- `routes` — required, at least one. Must be reachable (dev server running)
+- `viewports` — optional. Defaults to 1440x900 and 390x844
+- `acceptance` — required, at least two items. Must be visually verifiable from a screenshot
