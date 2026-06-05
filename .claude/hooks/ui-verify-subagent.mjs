@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { readFileSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { join } from "node:path";
+import { join, extname } from "node:path";
 import { chromium } from "playwright";
 
 const WORK_DIR = "/tmp/ccweb-verify";
@@ -132,16 +132,27 @@ function buildSlug(url, scrollTo) {
 }
 
 // ── Build Codex prompt ─────────────────────────────────────
-function buildPrompt(contract, shots) {
+function buildPrompt(contract, shots, hasReference) {
   const vpList = shots.map(s => {
     const scrollNote = s.scrollTo ? `(scrolled to ${s.scrollTo})` : "(top of page)";
     return `  - ${s.viewport} @ ${s.route} ${scrollNote}`;
   }).join("\n");
   const criteria = contract.acceptance.map((a, i) => `  ${i + 1}. ${a}`).join("\n");
 
-  return [
+  const lines = [
     "You are an independent UI QA reviewer. You did not write this code.",
-    "Judge ONLY the provided screenshots against the acceptance criteria below.",
+  ];
+  if (hasReference) {
+    lines.push(
+      "The FIRST image(s) are the REFERENCE/TARGET — this is what the UI MUST look like.",
+      "The REMAINING images are the CURRENT state captured from the running app.",
+      "Judge whether the current state visually matches the reference layout, structure, and design.",
+    );
+  }
+  lines.push("Judge ONLY the provided screenshots against the acceptance criteria below.");
+
+  return [
+    ...lines,
     "",
     `TASK IMPLEMENTED: ${contract.task}`,
     "",
@@ -190,8 +201,20 @@ async function main() {
 
   const shots = await captureScreenshots(contract);
   persistScreenshots(shots, repoRoot);
-  const prompt = buildPrompt(contract, shots);
-  const verdict = invokeCodex(prompt, shots.map(s => s.path), repoRoot);
+
+  const refDir = join(repoRoot, ".ui-verify", "reference");
+  const IMAGE_EXTS = new Set([".png", ".jpg", ".jpeg", ".webp"]);
+  let refImages = [];
+  if (existsSync(refDir)) {
+    refImages = readdirSync(refDir)
+      .filter(f => IMAGE_EXTS.has(extname(f).toLowerCase()))
+      .sort()
+      .map(f => join(refDir, f));
+  }
+
+  const allImages = [...refImages, ...shots.map(s => s.path)];
+  const prompt = buildPrompt(contract, shots, refImages.length > 0);
+  const verdict = invokeCodex(prompt, allImages, repoRoot);
 
   writeFileSync(join(WORK_DIR, "verdict.json"), JSON.stringify(verdict, null, 2));
 
