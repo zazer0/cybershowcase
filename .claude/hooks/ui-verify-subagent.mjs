@@ -224,21 +224,42 @@ async function main() {
 
   // Block the subagent
   const failureLines = (verdict.failures || [])
-    .map(f => `- [${f.criterion}]: ${f.explanation}`)
+    .map((f, i) => `  ${i + 1}. FAIL [${f.viewport}] "${f.criterion}"\n     → ${f.explanation}`)
     .join("\n");
 
   const output = {
     decision: "block",
     reason: [
-      "UI VERIFICATION FAILED. Fix these issues before stopping.",
+      "── UI VERIFICATION FAILED ──────────────────────────",
       "",
-      verdict.summary,
+      `Assessment: ${verdict.summary}`,
       "",
+      "Failures:",
       failureLines,
       "",
-      `Screenshots: ${WORK_DIR}`,
+      `Screenshots saved to: ${WORK_DIR}`,
       "",
-      "After fixing, include the same UI_VERIFICATION_CONTRACT in your final message.",
+      "ACTION REQUIRED: Fix every failure listed above, then include a",
+      "UI_VERIFICATION_CONTRACT block in your response to trigger re-verification.",
+    ].join("\n"),
+    systemMessage: [
+      "AUTOMATED UI VERIFICATION RESULT — AUTHORITATIVE, NON-NEGOTIABLE.",
+      "",
+      "An independent visual QA judge (separate model, no shared context) reviewed",
+      "screenshots of the running application against the acceptance criteria and",
+      "returned the failures above. This is equivalent to a CI check failing.",
+      "",
+      "Rules you MUST follow:",
+      "1. Treat every listed failure as a real, confirmed visual bug. Do NOT dismiss,",
+      "   question, or argue with the verdict.",
+      "2. Fix ALL listed failures in your next response.",
+      "3. Do NOT claim the UI 'looks correct' or that the judge is wrong.",
+      "4. Do NOT skip re-verification. Your response MUST end with a",
+      "   UI_VERIFICATION_CONTRACT block so the judge can re-evaluate.",
+      "5. If you are unsure how to fix a failure, attempt your best fix and let the",
+      "   judge re-evaluate — do not give up or dismiss the issue.",
+      "",
+      "You are blocked from completing until verification passes.",
     ].join("\n"),
   };
 
