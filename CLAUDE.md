@@ -85,6 +85,7 @@ UI_VERIFICATION_CONTRACT
 task: <one-line description of what was implemented>
 routes:
   - <full URL, e.g. http://localhost:5173/pricing>
+  - http://localhost:5173/ >> .scroll-story
 viewports:
   - <WIDTHxHEIGHT, e.g. 1440x900>
   - <WIDTHxHEIGHT, e.g. 390x844>
@@ -95,6 +96,6 @@ acceptance:
 
 Rules:
 - `task` — required, single line
-- `routes` — required, at least one. Must be reachable (dev server running)
+- `routes` — required, at least one. Must be reachable (dev server running). Append `>> .css-selector` to scroll that element into view before the screenshot. Without `>>`, the screenshot captures the initial viewport (top of page).
 - `viewports` — optional. Defaults to 1440x900 and 390x844
 - `acceptance` — required, at least two items. Must be visually verifiable from a screenshot

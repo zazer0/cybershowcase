@@ -45,9 +45,9 @@
 
 <Float floatIntensity={1.2} speed={0.7} rotationIntensity={0.2}>
 	<T.Group {position}>
-		<!-- Glow aura: larger semi-transparent sphere behind the main node -->
+		<!-- Glow aura: larger semi-transparent cube behind the main node -->
 		<T.Mesh scale={currentScale}>
-			<T.SphereGeometry args={[glowRadius, 32, 32]} />
+			<T.BoxGeometry args={[glowRadius * 2, glowRadius * 2, glowRadius * 2]} />
 			<T.MeshBasicMaterial
 				color="#C9A227"
 				transparent
@@ -56,9 +56,9 @@
 			/>
 		</T.Mesh>
 
-		<!-- Main node sphere with physical material -->
+		<!-- Main node cube with physical material -->
 		<T.Mesh scale={currentScale}>
-			<T.SphereGeometry args={[radius, 48, 48]} />
+			<T.BoxGeometry args={[radius * 2, radius * 2, radius * 2]} />
 			<T.MeshPhysicalMaterial
 				color={isActive ? COLOR_ACTIVE : COLOR_INACTIVE}
 				emissive={isActive ? COLOR_ACTIVE : '#000000'}
@@ -70,7 +70,7 @@
 			/>
 		</T.Mesh>
 
-		<!-- HTML label billboard above sphere -->
+		<!-- HTML label billboard above cube -->
 		<HTML sprite pointerEvents="none" position={[0, labelY, 0]}>
 			<span class="node-label" class:active={isActive} data-node-id={id}>{label}</span>
 		</HTML>
