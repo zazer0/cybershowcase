@@ -7,7 +7,7 @@
 	let { isActive, activeNodeId }: { isActive: boolean; activeNodeId: string } = $props();
 
 	// ── Spring-driven glow opacity ──────────────────────────────────────────
-	let targetGlowOpacity = $derived(isActive ? 0.12 : 0);
+	let targetGlowOpacity = $derived(isActive ? 0.06 : 0);
 	let currentGlowOpacity = $state(0);
 
 	const SPRING = 8;
@@ -18,7 +18,7 @@
 	});
 
 	// ── Geometry (disposed on destroy) ─────────────────────────────────────
-	const planeGeo = new THREE.PlaneGeometry(3.0, 3.8);
+	const planeGeo = new THREE.PlaneGeometry(2.9, 2.1);
 	const layerBorderGeo = new THREE.PlaneGeometry(2.52, 1.65);
 	const layerFillGeo = new THREE.PlaneGeometry(2.44, 1.57);
 
