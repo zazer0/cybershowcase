@@ -1,13 +1,13 @@
 {
   "hooks": {
-    "SubagentStop": [
+    "Stop": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
             "command": "node ${CLAUDE_PROJECT_DIR}/.claude/hooks/ui-verify-subagent.mjs",
-            "timeout": 240
+            "timeout": 240,
+            "statusMessage": "Verifying UI..."
           }
         ]
       }
