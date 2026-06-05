@@ -25,7 +25,7 @@
 				'Agent knows to SSH into relevant dev VM, and reads the relevant SoP restriction that editing e2e user story tests is strictly prohibited',
 			transcript:
 				'[Internal Thought]: I must prioritize the e2e test failure. Before modifying any code, I will verify the environment constraints to ensure no forbidden files are edited...',
-			activeNodeId: 'trigger',
+			activeNodeId: 'agent',
 			activeArcId: null
 		},
 		{
@@ -37,8 +37,8 @@
 				"Agent knows to commit current repo state if positive progress made — else, it leaves the repo state uncommitted, just 'resetting the deployed infra state for a fresh run' and then spawning another coding agent through automate_loop.sh",
 			transcript:
 				'[Log]: Analyzing session_logs.jsonl... Previous attempt failed at step 12/13. No commit created to avoid pollution. Resetting infra state...',
-			activeNodeId: 'orchestrate',
-			activeArcId: 'orchestrate-to-coding'
+			activeNodeId: 'orchestrator',
+			activeArcId: null
 		},
 		{
 			id: 'step-2',
@@ -49,8 +49,8 @@
 				"Calling automate_loop.sh with relevant paths + a succinct summary of the prior agent's goal",
 			transcript:
 				'$ ./automate_loop.sh --goal "Fix e2e step 13" --context "Root cause: timeout in auth-proxy"\n[Plan]: 1. Update proxy timeout to 30s  |  2. Verify connectivity  |  3. Run test',
-			activeNodeId: 'coding-agent',
-			activeArcId: 'coding-to-validator'
+			activeNodeId: 'ssh',
+			activeArcId: 'ssh-arrow'
 		},
 		{
 			id: 'step-3',
@@ -61,8 +61,8 @@
 				'Orchestrator behavior: if prior coding CLI succeeded, runs solution.sh to determine current progress and saves result in error_output location; if prior coding CLI failed, skips validation as spawned agent will handle it',
 			transcript:
 				'[Validator]: Executing solution.sh...\n[Result]: Step 13/13 PASSED — Final state validated.',
-			activeNodeId: 'validator',
-			activeArcId: 'validator-to-orchestrate'
+			activeNodeId: 'server',
+			activeArcId: null
 		},
 		{
 			id: 'success',
@@ -72,7 +72,7 @@
 				'"Successfully completed 13/13 exploit chain steps after 6+ hours of autonomous operation"',
 			description: 'Agent delivers complete success without human intervention',
 			transcript: 'Total Duration: 6h 24m\nIterations: 11 loops\nFinal Status: ALL TESTS PASSED',
-			activeNodeId: 'resolution',
+			activeNodeId: 'result',
 			activeArcId: null,
 			isSuccess: true,
 			stats: [
