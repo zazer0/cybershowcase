@@ -17,7 +17,8 @@
 
 	const DASH_COUNT = 4;
 	const DASH_WIDTH = 0.35;
-	const DASH_GAP = (ARROW_END_X - ARROW_START_X - DASH_COUNT * DASH_WIDTH) / (DASH_COUNT - 1);
+	const DASH_INSET = 0.35;
+	const DASH_GAP = (ARROW_END_X - ARROW_START_X - 2 * DASH_INSET - DASH_COUNT * DASH_WIDTH) / (DASH_COUNT - 1);
 
 	const PARTICLE_SPEED = 0.5;
 	const SPRING = 8;
@@ -25,7 +26,7 @@
 	// Dash x-center positions
 	const dashPositions: number[] = Array.from(
 		{ length: DASH_COUNT },
-		(_, i) => ARROW_START_X + i * (DASH_WIDTH + DASH_GAP) + DASH_WIDTH / 2
+		(_, i) => ARROW_START_X + DASH_INSET + i * (DASH_WIDTH + DASH_GAP) + DASH_WIDTH / 2
 	);
 
 	// ── Geometry (created once, shared/disposed) ────────────────────────
