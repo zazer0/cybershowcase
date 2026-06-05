@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { chromium } from "playwright";
@@ -35,7 +35,16 @@ function parseContract(text) {
     } else if (line === "acceptance:") {
       key = "acceptance";
     } else if (line.startsWith("- ") && key) {
-      contract[key].push(line.slice(2).trim());
+      const val = line.slice(2).trim();
+      if (key === "routes") {
+        const parts = val.split(">>");
+        contract.routes.push({
+          url: parts[0].trim(),
+          scrollTo: parts[1]?.trim() || null,
+        });
+      } else {
+        contract[key].push(val);
+      }
     } else {
       break; // end of contract block
     }
@@ -56,17 +65,28 @@ async function captureScreenshots(contract) {
   for (const route of contract.routes) {
     for (const vp of contract.viewports) {
       const [w, h] = vp.split("x").map(Number);
-      const slug = route.replace(/[^a-z0-9]/gi, "-").replace(/-+/g, "-");
-      const filename = `${slug}_${vp}.png`;
+      const urlSlug = route.url.replace(/[^a-z0-9]/gi, "-").replace(/-+/g, "-");
+      const scrollSlug = route.scrollTo
+        ? "_scroll-" + route.scrollTo.replace(/[^a-z0-9]/gi, "-").replace(/-+/g, "-")
+        : "";
+      const filename = `${urlSlug}${scrollSlug}_${vp}.png`;
       const filepath = join(WORK_DIR, filename);
 
       const ctx = await browser.newContext({ viewport: { width: w, height: h } });
       const page = await ctx.newPage();
-      await page.goto(route, { waitUntil: "networkidle", timeout: 30_000 });
+      await page.goto(route.url, { waitUntil: "networkidle", timeout: 30_000 });
+
+      if (route.scrollTo) {
+        await page.waitForSelector(route.scrollTo, { timeout: 10_000 });
+        const el = await page.$(route.scrollTo);
+        await el.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(500);
+      }
+
       await page.screenshot({ path: filepath, fullPage: false });
       await ctx.close();
 
-      shots.push({ path: filepath, route, viewport: vp });
+      shots.push({ path: filepath, route: route.url, viewport: vp, scrollTo: route.scrollTo });
     }
   }
 
@@ -74,9 +94,49 @@ async function captureScreenshots(contract) {
   return shots;
 }
 
+// ── Persist screenshots locally ────────────────────────────
+function persistScreenshots(shots, repoRoot) {
+  const dir = join(repoRoot, ".ui-verify", "screenshots");
+  mkdirSync(dir, { recursive: true });
+
+  let maxNum = 0;
+  try {
+    for (const f of readdirSync(dir)) {
+      const match = f.match(/^(\d{4})-/);
+      if (match) maxNum = Math.max(maxNum, parseInt(match[1], 10));
+    }
+  } catch {}
+
+  for (const shot of shots) {
+    maxNum++;
+    const prefix = String(maxNum).padStart(4, "0");
+    const slug = buildSlug(shot.route, shot.scrollTo);
+    const filename = `${prefix}-${slug}.png`;
+    writeFileSync(join(dir, filename), readFileSync(shot.path));
+  }
+}
+
+function buildSlug(url, scrollTo) {
+  let pathname;
+  try {
+    pathname = new URL(url).pathname;
+  } catch {
+    pathname = url;
+  }
+  pathname = pathname.replace(/^\/+|\/+$/g, "");
+  let slug = pathname || "root";
+  if (scrollTo) {
+    slug += "-" + scrollTo.replace(/^[.#]+/, "");
+  }
+  return slug.replace(/[^a-z0-9]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+}
+
 // ── Build Codex prompt ─────────────────────────────────────
 function buildPrompt(contract, shots) {
-  const vpList = shots.map(s => `  - ${s.viewport} @ ${s.route}`).join("\n");
+  const vpList = shots.map(s => {
+    const scrollNote = s.scrollTo ? `(scrolled to ${s.scrollTo})` : "(top of page)";
+    return `  - ${s.viewport} @ ${s.route} ${scrollNote}`;
+  }).join("\n");
   const criteria = contract.acceptance.map((a, i) => `  ${i + 1}. ${a}`).join("\n");
 
   return [
@@ -129,6 +189,7 @@ async function main() {
   }
 
   const shots = await captureScreenshots(contract);
+  persistScreenshots(shots, repoRoot);
   const prompt = buildPrompt(contract, shots);
   const verdict = invokeCodex(prompt, shots.map(s => s.path), repoRoot);
 
