@@ -19,8 +19,8 @@
 
 	// ── Geometry (disposed on destroy) ─────────────────────────────────────
 	const planeGeo = new THREE.PlaneGeometry(3.0, 3.8);
-	const layerBorderGeo = new THREE.PlaneGeometry(2.08, 2.48);
-	const layerFillGeo = new THREE.PlaneGeometry(2.0, 2.4);
+	const layerBorderGeo = new THREE.PlaneGeometry(1.58, 1.98);
+	const layerFillGeo = new THREE.PlaneGeometry(1.5, 1.9);
 
 	onDestroy(() => {
 		planeGeo.dispose();
