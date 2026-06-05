@@ -32,15 +32,15 @@
 <!-- Stacked back-layer for depth effect -->
 <T.Mesh position={[0.08, 0.18, -0.2]}>
 	<T is={layerBorderGeo} />
-	<T.MeshBasicMaterial color="#cfcbc0" depthWrite={false} />
+	<T.MeshBasicMaterial color="#cfcbc0" />
 </T.Mesh>
 <T.Mesh position={[0.08, 0.18, -0.195]}>
 	<T is={layerFillGeo} />
-	<T.MeshBasicMaterial color="#f5f3ec" depthWrite={false} />
+	<T.MeshBasicMaterial color="#f5f3ec" />
 </T.Mesh>
 
 <!-- Glow plane sits slightly behind the HTML overlay -->
-<T.Mesh position={[0, 0, -0.1]}>
+<T.Mesh position={[0, 0, -0.5]}>
 	<T is={planeGeo} />
 	<T.MeshBasicMaterial
 		color="#C9A227"
