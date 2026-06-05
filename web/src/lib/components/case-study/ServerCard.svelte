@@ -19,8 +19,8 @@
 
 	// ── Geometry (disposed on destroy) ─────────────────────────────────────
 	const planeGeo = new THREE.PlaneGeometry(3.0, 3.8);
-	const layerBorderGeo = new THREE.PlaneGeometry(2.28, 2.68);
-	const layerFillGeo = new THREE.PlaneGeometry(2.2, 2.6);
+	const layerBorderGeo = new THREE.PlaneGeometry(2.52, 1.65);
+	const layerFillGeo = new THREE.PlaneGeometry(2.44, 1.57);
 
 	onDestroy(() => {
 		planeGeo.dispose();
@@ -31,21 +31,21 @@
 
 <!-- Stacked back-layers for depth effect -->
 <!-- Layer 2 (back-most) -->
-<T.Mesh position={[0.35, 0.35, -0.35]}>
+<T.Mesh position={[0.16, 0.26, -0.35]}>
 	<T is={layerBorderGeo} />
 	<T.MeshBasicMaterial color="#cfcbc0" depthWrite={false} />
 </T.Mesh>
-<T.Mesh position={[0.35, 0.35, -0.345]}>
+<T.Mesh position={[0.16, 0.26, -0.345]}>
 	<T is={layerFillGeo} />
 	<T.MeshBasicMaterial color="#f5f3ec" depthWrite={false} />
 </T.Mesh>
 
 <!-- Layer 1 -->
-<T.Mesh position={[0.18, 0.18, -0.2]}>
+<T.Mesh position={[0.08, 0.18, -0.2]}>
 	<T is={layerBorderGeo} />
 	<T.MeshBasicMaterial color="#cfcbc0" depthWrite={false} />
 </T.Mesh>
-<T.Mesh position={[0.18, 0.18, -0.195]}>
+<T.Mesh position={[0.08, 0.18, -0.195]}>
 	<T is={layerFillGeo} />
 	<T.MeshBasicMaterial color="#f5f3ec" depthWrite={false} />
 </T.Mesh>
