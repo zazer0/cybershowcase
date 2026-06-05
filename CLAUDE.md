@@ -66,6 +66,10 @@ npm workspaces monorepo — root orchestrates `web/` (SvelteKit) and `api/` (Fas
 - SvelteKit 2.57, Vite 8, TypeScript 6
 - **Threlte v8**: check current v8 docs before editing Canvas, T, GLTF, events, snippets, plugins, or Rapier. After 3D changes, run the app and visually inspect the scene.
 
+## 3D Diagram constraints
+
+All visual/layout changes to the system diagram must use 3D geometry (PlaneGeometry, mesh positioning, material properties) — not CSS modifications. The diagram is fully parameterized in Threlte world-space; CSS-level visual fixes are prohibited to keep future changes in the 3D layer.
+
 ## Test configuration
 
 - **Vitest**: `requireAssertions: true` — every test must contain at least one assertion. Node environment. Tests match `src/**/*.{test,spec}.{js,ts}`.
