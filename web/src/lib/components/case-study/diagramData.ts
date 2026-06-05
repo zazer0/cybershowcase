@@ -1,72 +1,56 @@
 /**
- * Static data for the 3D cycle diagram.
- * Node positions, arc definitions, and utility functions.
+ * Static data for the two-panel system architecture diagram.
+ * Element positions, connection definitions, and utility functions.
  * No Three.js imports — pure data/logic module for testability.
  */
 
-export interface NodeData {
+export interface ElementData {
 	id: string;
 	label: string;
-	position: [number, number, number];
-	isIO?: boolean;
+	position: [number, number, number]; // 3D world position (all z=0)
+	type: 'card' | 'sub-card' | 'sub-item' | 'connection';
+	parent?: string; // which card this belongs to
 }
 
-export interface ArcData {
+export interface ConnectionData {
 	id: string;
 	fromId: string;
 	toId: string;
-	/** Bezier control point for the curved arc */
-	controlPoint: [number, number, number];
+	label: string;
+	style: 'dashed';
 }
 
 /**
- * 5 system nodes in 3D space (Y-up).
- * Layout:
- *   Trigger (0, 2.2, 0)          — I/O top
- *   Orchestrate (0, 1, 0)        — Cycle top
- *   Coding Agent (1.5, -0.8, 0)  — Cycle bottom-right
- *   Validator (-1.5, -0.8, 0)    — Cycle bottom-left
- *   Resolution (0, -2.2, 0)      — I/O bottom
+ * Two-panel layout elements.
+ * Left panel: CYBERCLAW agent system (x < 0)
+ * Right panel: DEV VM server (x > 0)
+ * Center: SSH connection labels
  */
-export const NODES: NodeData[] = [
-	{ id: 'trigger', label: 'Trigger', position: [0, 2.2, 0], isIO: true },
-	{ id: 'orchestrate', label: 'Orchestrate', position: [0, 1, 0] },
-	{ id: 'coding-agent', label: 'Coding Agent', position: [1.3, -0.8, 0] },
-	{ id: 'validator', label: 'Validator', position: [-1.5, -0.8, 0] },
-	{ id: 'resolution', label: 'Resolution', position: [0, -2.2, 0], isIO: true }
+export const ELEMENTS: ElementData[] = [
+	{ id: 'agent', label: 'CYBERCLAW', position: [-3.0, 0, 0], type: 'card' },
+	{ id: 'cyberclaw', label: 'Cyberclaw', position: [-3.0, 0.6, 0], type: 'sub-card', parent: 'agent' },
+	{ id: 'orchestrator', label: 'orchestrator', position: [-3.0, -0.4, 0], type: 'sub-item', parent: 'agent' },
+	{ id: 'server', label: 'DEV VM', position: [3.0, 0, 0], type: 'card' },
+	{ id: 'cli-agent', label: 'CLI Agent', position: [3.0, 0.6, 0], type: 'sub-item', parent: 'server' },
+	{ id: 'automate-loop', label: 'automate_loop.sh', position: [3.0, 0, 0], type: 'sub-item', parent: 'server' },
+	{ id: 'solution-sh', label: 'solution.sh', position: [3.0, -0.6, 0], type: 'sub-item', parent: 'server' },
+	{ id: 'ssh', label: 'SSH', position: [0, 0.3, 0], type: 'connection' },
+	{ id: 'result', label: 'result', position: [0, -0.3, 0], type: 'connection' }
 ];
 
 /**
- * 3 cycle arcs: orchestrate → coding-agent → validator → orchestrate
- * controlPoint creates the outward curve for each arc.
+ * SSH arrow connecting the two panels.
  */
-export const ARCS: ArcData[] = [
-	{
-		id: 'orchestrate-to-coding',
-		fromId: 'orchestrate',
-		toId: 'coding-agent',
-		controlPoint: [2.4, 0.6, 0]
-	},
-	{
-		id: 'coding-to-validator',
-		fromId: 'coding-agent',
-		toId: 'validator',
-		controlPoint: [0, -2.4, 0]
-	},
-	{
-		id: 'validator-to-orchestrate',
-		fromId: 'validator',
-		toId: 'orchestrate',
-		controlPoint: [-2.4, 0.6, 0]
-	}
+export const CONNECTIONS: ConnectionData[] = [
+	{ id: 'ssh-arrow', fromId: 'agent', toId: 'server', label: 'SSH', style: 'dashed' }
 ];
 
-/** Look up a node by ID. */
-export function getNodeById(id: string): NodeData | undefined {
-	return NODES.find((n) => n.id === id);
+/** Look up an element by ID. */
+export function getNodeById(id: string): ElementData | undefined {
+	return ELEMENTS.find((e) => e.id === id);
 }
 
-/** Look up a node's 3D position, returning [0,0,0] for unknown IDs. */
+/** Look up an element's 3D position, returning [0,0,0] for unknown IDs. */
 export function getNodePosition(id: string): [number, number, number] {
 	return getNodeById(id)?.position ?? [0, 0, 0];
 }

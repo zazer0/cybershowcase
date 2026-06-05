@@ -1,185 +1,57 @@
 /**
- * Pure data/logic module for scroll-synced step animations.
+ * Pure data/logic module for SSH flow animations in the two-panel diagram.
  * No Three.js or Threlte imports — testable in vitest node environment.
  *
- * Three distinct animations for the 3 cycle steps:
- * - Orchestrate: dispatch particles flowing outward along arcs
- * - Coding Agent: rising data-stream particles + pulsing ring
- * - Validator: converging particles + scanning ring
+ * Single animation type: ssh-flow
+ * Particles travel linearly from the agent panel to the server panel.
  */
 
-export type AnimationType = 'orchestrate' | 'coding' | 'validator';
+export type AnimationType = 'ssh-flow';
 
-export interface ParticlePosition {
-	pos: [number, number, number];
-	opacity: number;
-}
-
-export interface OrchPath {
-	from: [number, number, number];
-	to: [number, number, number];
-	controlPoint?: [number, number, number];
-}
+export const SSH_ARROW_START: [number, number, number] = [-1.5, 0.3, 0];
+export const SSH_ARROW_END: [number, number, number] = [1.5, 0.3, 0];
+export const SSH_PARTICLE_COUNT = 6;
 
 /**
  * Determines which animation type corresponds to the active node.
- * Returns null for non-cycle nodes (trigger, resolution).
+ * Only the 'ssh' connection element triggers the ssh-flow animation.
  */
 export function getAnimationType(activeNodeId: string): AnimationType | null {
-	switch (activeNodeId) {
-		case 'orchestrate':
-			return 'orchestrate';
-		case 'coding-agent':
-			return 'coding';
-		case 'validator':
-			return 'validator';
-		default:
-			return null;
+	if (activeNodeId === 'ssh') {
+		return 'ssh-flow';
 	}
+	return null;
 }
 
-/** Number of particles per animation type. */
+/** Number of particles for an animation type. */
 export function getParticleCount(type: AnimationType | string | null): number {
-	switch (type) {
-		case 'orchestrate':
-			return 9; // 3 paths × 3 particles
-		case 'coding':
-			return 8;
-		case 'validator':
-			return 8;
-		default:
-			return 0;
+	if (type === 'ssh-flow') {
+		return SSH_PARTICLE_COUNT;
 	}
+	return 0;
 }
 
-// ═══════════════════════════════════════════════════════════
-// Orchestrate: dispatch paths
-// ═══════════════════════════════════════════════════════════
-
-export const ORCH_PATHS: OrchPath[] = [
-	{
-		from: [0, 1, 0],
-		to: [1.3, -0.8, 0],
-		controlPoint: [2.4, 0.6, 0]
-	},
-	{
-		from: [-1.5, -0.8, 0],
-		to: [0, 1, 0],
-		controlPoint: [-2.4, 0.6, 0]
-	},
-	{
-		from: [0, 1, 0],
-		to: [0, -2.2, 0]
-		// linear — no control point
-	}
-];
-
 /**
- * Compute a particle position along an orchestrate dispatch path.
- * @param pathIdx - which path (0-2)
- * @param t - progress along the path (0-1)
- */
-export function getOrchParticlePosition(pathIdx: number, t: number): [number, number, number] {
-	const safeIdx = ((pathIdx % ORCH_PATHS.length) + ORCH_PATHS.length) % ORCH_PATHS.length;
-	const path = ORCH_PATHS[safeIdx];
-	const tClamped = Math.max(0, Math.min(1, t));
-
-	if (path.controlPoint) {
-		// Quadratic bezier: B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
-		const u = 1 - tClamped;
-		const x =
-			u * u * path.from[0] +
-			2 * u * tClamped * path.controlPoint[0] +
-			tClamped * tClamped * path.to[0];
-		const y =
-			u * u * path.from[1] +
-			2 * u * tClamped * path.controlPoint[1] +
-			tClamped * tClamped * path.to[1];
-		const z =
-			u * u * path.from[2] +
-			2 * u * tClamped * path.controlPoint[2] +
-			tClamped * tClamped * path.to[2];
-		return [x, y, z];
-	}
-
-	// Linear interpolation
-	const x = path.from[0] + tClamped * (path.to[0] - path.from[0]);
-	const y = path.from[1] + tClamped * (path.to[1] - path.from[1]);
-	const z = path.from[2] + tClamped * (path.to[2] - path.from[2]);
-	return [x, y, z];
-}
-
-// ═══════════════════════════════════════════════════════════
-// Coding Agent: data-stream particles
-// ═══════════════════════════════════════════════════════════
-
-export const CODING_CENTER: [number, number, number] = [1.3, -0.8, 0];
-
-/**
- * Compute a particle position for the coding-agent data-stream animation.
- * Particles rise upward from the coding-agent node with subtle horizontal oscillation.
+ * Compute a particle position along the SSH arrow path.
+ * Linear lerp from SSH_ARROW_START to SSH_ARROW_END.
  *
- * @param particleIdx - which particle (0 to count-1)
- * @param t - progress (0-1), 0 = bottom, 1 = top of rise
- * @param time - global time accumulator for oscillation
+ * t is the particle's position along the path (0=start, 1=end).
+ * particleIdx offsets the starting t so particles are spread along the path:
+ * each particle is shifted by (particleIdx / SSH_PARTICLE_COUNT) of the total path length,
+ * wrapping back to the start. particleIdx=0 lerps directly so t=0 → start and t=1 → end.
  */
-export function getCodingParticlePosition(
+export function getSSHParticlePosition(
 	particleIdx: number,
-	t: number,
-	time: number
+	t: number
 ): [number, number, number] {
-	const tClamped = Math.max(0, Math.min(1, t));
-	const [cx, cy, cz] = CODING_CENTER;
+	const pathLength = SSH_ARROW_END[0] - SSH_ARROW_START[0]; // x-axis travel distance
 
-	// Spread particles in a loose column around the center
-	const angleOffset = particleIdx * 1.2;
-	const spreadRadius = 0.3;
-	const baseX = cx + Math.cos(angleOffset) * spreadRadius * 0.5;
-	const baseZ = cz + Math.sin(angleOffset) * spreadRadius * 0.3;
+	// particleIdx=0 uses t directly; others wrap via modulo so they are spread along the path
+	const effectiveT = particleIdx === 0 ? t : (t + particleIdx / SSH_PARTICLE_COUNT) % 1;
 
-	// Vertical rise: from node Y up by 1.8 units
-	const y = cy + tClamped * 1.8;
-
-	// Subtle horizontal oscillation for "data stream" effect
-	const oscX = Math.sin(tClamped * 5 + particleIdx + time * 0.5) * 0.1;
-	const oscZ = Math.cos(tClamped * 5 + particleIdx + time * 0.5) * 0.1;
-
-	return [baseX + oscX, y, baseZ + oscZ];
-}
-
-// ═══════════════════════════════════════════════════════════
-// Validator: converging scanning particles
-// ═══════════════════════════════════════════════════════════
-
-export const VALIDATOR_CENTER: [number, number, number] = [-1.5, -0.8, 0];
-
-/**
- * Compute a particle position for the validator converging animation.
- * Particles spiral inward toward the validator node.
- *
- * @param particleIdx - which particle (0 to count-1)
- * @param t - progress (0-1), 0 = far outer ring, 1 = converged at center
- * @param time - global time accumulator for rotation
- */
-export function getValidatorParticlePosition(
-	particleIdx: number,
-	t: number,
-	time: number
-): [number, number, number] {
-	const tClamped = Math.max(0, Math.min(1, t));
-	const [cx, cy, cz] = VALIDATOR_CENTER;
-
-	// Each particle starts at a different angle, rotating inward
-	const baseAngle = particleIdx * (Math.PI * 0.25);
-	const spiralAngle = baseAngle + tClamped * Math.PI * 2 + time * 0.8;
-
-	// Radius shrinks as t increases (convergence)
-	const maxRadius = 1.2;
-	const radius = (1 - tClamped) * maxRadius;
-
-	const x = cx + Math.cos(spiralAngle) * radius;
-	const y = cy + Math.sin(spiralAngle) * radius * 0.6;
-	const z = cz + Math.sin(spiralAngle * 0.7) * 0.3;
+	const x = SSH_ARROW_START[0] + effectiveT * pathLength;
+	const y = SSH_ARROW_START[1] + effectiveT * (SSH_ARROW_END[1] - SSH_ARROW_START[1]);
+	const z = SSH_ARROW_START[2] + effectiveT * (SSH_ARROW_END[2] - SSH_ARROW_START[2]);
 
 	return [x, y, z];
 }
