@@ -15,8 +15,8 @@
 	const ARROW_END_X = 1.5;
 	const ARROW_Y = 0.3;
 
-	const DASH_COUNT = 9;
-	const DASH_WIDTH = 0.18;
+	const DASH_COUNT = 4;
+	const DASH_WIDTH = 0.35;
 	const DASH_GAP = (ARROW_END_X - ARROW_START_X - DASH_COUNT * DASH_WIDTH) / (DASH_COUNT - 1);
 
 	const PARTICLE_SPEED = 0.5;
@@ -29,7 +29,7 @@
 	);
 
 	// ── Geometry (created once, shared/disposed) ────────────────────────
-	const dashGeo = new BoxGeometry(DASH_WIDTH, 0.04, 0.04);
+	const dashGeo = new BoxGeometry(DASH_WIDTH, 0.06, 0.06);
 	const dotGeo = new SphereGeometry(0.08, 12, 8);
 	const coneGeo = new ConeGeometry(0.1, 0.25, 8);
 	const particleGeo = new SphereGeometry(0.05, 8, 6);
