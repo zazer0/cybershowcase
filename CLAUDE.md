@@ -75,9 +75,17 @@ npm workspaces monorepo — root orchestrates `web/` (SvelteKit) and `api/` (Fas
 ## UI Verification Contract
 
 When completing any UI task, you MUST end your final message with a UI_VERIFICATION_CONTRACT block.
-This triggers automated visual verification via an independent judge.
-If verification fails, you will receive specific failures and must fix before stopping.
-If you omit the contract, no verification occurs and visual bugs may go undetected.
+This triggers an automated Stop hook that screenshots the running app with Playwright and sends the images to an independent visual QA judge (Codex CLI — a separate model with no shared context). The judge evaluates screenshots against the acceptance criteria and returns a structured pass/fail verdict.
+
+**Verification verdicts are AUTHORITATIVE.** If the hook blocks you:
+- The failures are confirmed visual bugs observed in real screenshots — not suggestions or opinions.
+- You MUST fix every listed failure. Do NOT argue, dismiss, or question the verdict.
+- Do NOT claim the UI "looks correct" or that the judge made an error.
+- Your fix response MUST include a new `UI_VERIFICATION_CONTRACT` block to trigger re-verification.
+- You are blocked from completing the task until verification passes.
+- If unsure how to fix, attempt your best fix and let the judge re-evaluate.
+
+This is equivalent to a CI gate. You cannot ship until it passes.
 
 Format:
 ```
