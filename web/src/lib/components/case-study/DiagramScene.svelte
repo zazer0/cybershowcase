@@ -13,10 +13,10 @@
 	} = $props();
 </script>
 
-<!-- Camera: pulled back to z=10 for wider two-panel layout -->
+<!-- Camera: pulled back for wider two-panel layout -->
 <T.PerspectiveCamera
 	makeDefault
-	position={[0, 0, 10]}
+	position={[0, 0, 8]}
 	fov={60}
 	oncreate={(ref) => ref.lookAt(0, 0, 0)}
 />
