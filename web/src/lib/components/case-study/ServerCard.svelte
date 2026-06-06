@@ -3,6 +3,7 @@
 	import { HTML } from '@threlte/extras';
 	import { onDestroy } from 'svelte';
 	import * as THREE from 'three';
+	import { getSubstepGlow } from './animationData.js';
 
 	let { isActive, activeNodeId, activeStepIndex }: { isActive: boolean; activeNodeId: string; activeStepIndex: number } = $props();
 
@@ -14,9 +15,27 @@
 
 	const SPRING = 8;
 
+	let substepTime = $state(0);
+	let substep0Glow = $state(0);
+	let substep1Glow = $state(0);
+	let substep2Glow = $state(0);
+
+	function lerpColor(a: string, b: string, t: number): string {
+		const ar = parseInt(a.slice(1, 3), 16), ag = parseInt(a.slice(3, 5), 16), ab = parseInt(a.slice(5, 7), 16);
+		const br = parseInt(b.slice(1, 3), 16), bg = parseInt(b.slice(3, 5), 16), bb = parseInt(b.slice(5, 7), 16);
+		const r = Math.round(ar + (br - ar) * t), g = Math.round(ag + (bg - ag) * t), bl = Math.round(ab + (bb - ab) * t);
+		return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${bl.toString(16).padStart(2, '0')}`;
+	}
+
 	useTask((delta) => {
 		const dt = Math.min(delta, 0.1);
 		currentGlowOpacity += (targetGlowOpacity - currentGlowOpacity) * SPRING * dt;
+		if (isExpanded) {
+			substepTime += dt;
+		}
+		substep0Glow = isExpanded ? getSubstepGlow(0, substepTime) : 0;
+		substep1Glow = isExpanded ? getSubstepGlow(1, substepTime) : 0;
+		substep2Glow = isExpanded ? getSubstepGlow(2, substepTime) : 0;
 	});
 
 	// ── Geometry (disposed on destroy) ─────────────────────────────────────
@@ -81,17 +100,17 @@
 			<div class="loop-container">
 				<div class="loop-header">automate_loop.sh</div>
 				<div class="substeps-row">
-					<div class="substep">
+					<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep0Glow)} style:background={`rgba(201, 162, 39, ${substep0Glow * 0.08})`}>
 						<div class="substep-title">1. DIAGNOSE</div>
 						<div class="substep-desc">investigate error<br/>find root cause</div>
 					</div>
 					<div class="substep-arrow">▸</div>
-					<div class="substep">
+					<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep1Glow)} style:background={`rgba(201, 162, 39, ${substep1Glow * 0.08})`}>
 						<div class="substep-title">2. PLAN</div>
 						<div class="substep-desc">write fix steps<br/>to plan file</div>
 					</div>
 					<div class="substep-arrow">▸</div>
-					<div class="substep">
+					<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep2Glow)} style:background={`rgba(201, 162, 39, ${substep2Glow * 0.08})`}>
 						<div class="substep-title">3. IMPLEMENT</div>
 						<div class="substep-desc">execute plan<br/>patch code</div>
 					</div>
