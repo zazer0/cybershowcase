@@ -78,6 +78,28 @@ All visual/layout changes to the system diagram must use 3D geometry (PlaneGeome
 
 `threlte-mcp` is configured in `.claude/mcp.json` and the `<MCPBridgeComponent />` is mounted inside the Threlte Canvas in `CycleDiagram3D.svelte`. With the dev server running, MCP tools can query and manipulate the live Three.js scene graph (list objects, read/write transforms, materials, visibility, etc.).
 
+### Using threlte-mcp in --print mode
+
+Claude Code `--print` mode does NOT auto-discover `.claude/mcp.json`. You must pass it explicitly:
+```bash
+claude --permission-mode bypassPermissions --mcp-config .claude/mcp.json --print "..."
+```
+
+### Connection flow
+
+1. CC starts → spawns `npx threlte-mcp` via stdio → MCP server opens WebSocket on port **8083**
+2. Browser's `<MCPBridgeComponent>` auto-reconnects to `ws://127.0.0.1:8083` every 3 seconds
+3. Once connected, MCP tools (`get_scene_state`, `find_objects`, etc.) work via browser relay
+
+If tools return "no game client connected":
+- Ensure the dev server is running (`npm run dev`) and a browser has the page loaded
+- Run `bash scripts/reload-browser.sh` to force-reload the headed Chrome tab
+- Wait ~5s for the bridge to reconnect, then retry
+
+### Host requirements
+
+The headed Chrome instance needs **WebGL via SwiftShader** (flags: `--enable-unsafe-swiftshader --use-gl=angle --use-angle=swiftshader`). Without these, Three.js cannot create a WebGL context and the MCPBridge never mounts.
+
 ## Test configuration
 
 - **Vitest**: `requireAssertions: true` — every test must contain at least one assertion. Node environment. Tests match `src/**/*.{test,spec}.{js,ts}`.
