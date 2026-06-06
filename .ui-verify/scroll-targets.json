@@ -1,0 +1,9 @@
+{
+  "first-load": { "scrollTo": null },
+  "step-zero": { "scrollTo": ".scroll-story .scroll-sentinel:nth-child(1)" },
+  "step-one": { "scrollTo": ".scroll-story .scroll-sentinel:nth-child(2)" },
+  "step-two": { "scrollTo": ".scroll-story .scroll-sentinel:nth-child(3)" },
+  "step-three": { "scrollTo": ".scroll-story .scroll-sentinel:nth-child(4)" },
+  "output": { "scrollTo": ".scroll-story .scroll-sentinel:nth-child(5)" },
+  "bottom": { "scrollTo": "__BOTTOM__" }
+}
