@@ -55,3 +55,42 @@ export function getSSHParticlePosition(
 
 	return [x, y, z];
 }
+
+// ── Camera configuration ──────────────────────────────────────────
+
+export interface CameraConfig {
+	position: [number, number, number];
+	lookAt: [number, number, number];
+	fov: number;
+}
+
+export const DEFAULT_CAMERA: CameraConfig = {
+	position: [0, 0, 10],
+	lookAt: [0, 0, 0],
+	fov: 60
+};
+
+export const STEP2_CAMERA: CameraConfig = {
+	position: [3.0, 0.1, 5.5],
+	lookAt: [3.0, 0.1, 0],
+	fov: 50
+};
+
+export function getCameraConfig(stepIndex: number): CameraConfig {
+	if (stepIndex === 2) return STEP2_CAMERA;
+	return DEFAULT_CAMERA;
+}
+
+// ── Substep highlight animation ───────────────────────────────────
+
+export const SUBSTEP_CYCLE_DURATION = 4.0;
+export const SUBSTEP_COUNT = 3;
+
+export function getSubstepGlow(substepIndex: number, time: number): number {
+	const phase = (time % SUBSTEP_CYCLE_DURATION) / SUBSTEP_CYCLE_DURATION;
+	const substepPhase = phase * SUBSTEP_COUNT;
+	const current = Math.floor(substepPhase);
+	if (current !== substepIndex) return 0;
+	const local = substepPhase - current;
+	return Math.sin(local * Math.PI);
+}
