@@ -144,3 +144,13 @@ The verification hook uses a file-based registry to control which section of the
 3. If the user says "now work on step two", update `.ui-verify/active-target` to `step-two`.
 4. The contract route should still specify the URL (e.g. `http://localhost:5173/`) but no longer needs `>> .selector` — the registry handles scroll positioning.
 5. If `.ui-verify/active-target` doesn't exist or the key isn't found, the hook falls back to the contract's `>> .selector` (backward compatible).
+
+### Agent-browser manual validation
+
+When using `agent-browser` for intermediate visual checks, `agent-browser scroll <selector>` may not reliably reach scroll-sentinel targets. Use `eval` with `scrollIntoView` instead:
+
+```sh
+agent-browser eval "document.querySelector('.scroll-story .scroll-sentinel:nth-child(3)').scrollIntoView({block: 'start'}); 'done'"
+```
+
+Sentinel mapping: nth-child(1)=Step 0, nth-child(2)=Step 1, nth-child(3)=Step 2, nth-child(4)=Step 3, nth-child(5)=Output. Wait ~1.5-2s after scrolling for camera/spring animations to settle before screenshotting.
