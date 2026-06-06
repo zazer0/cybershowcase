@@ -99,7 +99,7 @@
 				</div>
 
 				<div class="diagram-3d-wrapper">
-					<CycleDiagram3D {activeNodeId} {activeArcId} />
+					<CycleDiagram3D {activeNodeId} {activeArcId} {activeStepIndex} />
 				</div>
 
 				<span class="footer-label">System Architecture</span>

@@ -4,7 +4,9 @@
 	import { onDestroy } from 'svelte';
 	import * as THREE from 'three';
 
-	let { isActive, activeNodeId }: { isActive: boolean; activeNodeId: string } = $props();
+	let { isActive, activeNodeId, activeStepIndex }: { isActive: boolean; activeNodeId: string; activeStepIndex: number } = $props();
+
+	let isExpanded = $derived(activeStepIndex === 2);
 
 	// ── Spring-driven glow opacity ──────────────────────────────────────────
 	let targetGlowOpacity = $derived(isActive ? 0.06 : 0);

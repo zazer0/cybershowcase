@@ -6,10 +6,12 @@
 
 	let {
 		activeNodeId,
-		activeArcId
+		activeArcId,
+		activeStepIndex
 	}: {
 		activeNodeId: string;
 		activeArcId: string | null;
+		activeStepIndex: number;
 	} = $props();
 </script>
 
@@ -43,5 +45,5 @@
 
 <!-- Server card — right panel -->
 <T.Group position={[3.0, 0, 0]}>
-	<ServerCard isActive={activeNodeId === 'server' || activeNodeId === 'result'} {activeNodeId} />
+	<ServerCard isActive={activeNodeId === 'server' || activeNodeId === 'result'} {activeNodeId} {activeStepIndex} />
 </T.Group>

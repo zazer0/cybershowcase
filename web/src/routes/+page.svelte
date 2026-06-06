@@ -49,7 +49,7 @@
 				"Calling automate_loop.sh with relevant paths + a succinct summary of the prior agent's goal",
 			transcript:
 				'$ ./automate_loop.sh --goal "Fix e2e step 13" --context "Root cause: timeout in auth-proxy"\n[Plan]: 1. Update proxy timeout to 30s  |  2. Verify connectivity  |  3. Run test',
-			activeNodeId: 'ssh',
+			activeNodeId: 'server',
 			activeArcId: 'ssh-arrow'
 		},
 		{
