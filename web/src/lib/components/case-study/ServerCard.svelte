@@ -65,30 +65,61 @@
 
 <!-- HTML card overlay — fixed orientation, centered on this group's origin -->
 <HTML pointerEvents="none" center distanceFactor={8}>
-	<div class="server-card">
-		<!-- Top row: DEV VM / ubuntu labels -->
-		<div class="top-row">
-			<span class="vm-label">DEV VM</span>
-			<span class="os-label">ubuntu</span>
-		</div>
+	{#if isExpanded}
+		<div class="server-card server-card--expanded">
+			<div class="top-row">
+				<span class="vm-label">DEV VM</span>
+				<span class="os-label">ubuntu@cyberclaw-dev</span>
+			</div>
 
-		<!-- CLI Agent — always gold border, gold background tint when active -->
-		<div class="item item--cli" class:item--active={activeNodeId === 'server'}>
-			CLI Agent
-		</div>
+			<div class="item item--cli item--active">
+				CLI Agent
+			</div>
 
-		<!-- automate_loop.sh — dashed, goes gold when active -->
-		<div class="item item--dashed" class:item--dashed-active={activeNodeId === 'server'}>
-			automate_loop.sh
-		</div>
+			<div class="arrow-down">▾</div>
 
-		<!-- solution.sh — dashed, goes gold when active -->
-		<div class="item item--dashed" class:item--dashed-active={activeNodeId === 'server'}>
-			solution.sh
-		</div>
-	</div>
+			<div class="loop-container">
+				<div class="loop-header">automate_loop.sh</div>
+				<div class="substeps-row">
+					<div class="substep">
+						<div class="substep-title">1. DIAGNOSE</div>
+						<div class="substep-desc">investigate error<br/>find root cause</div>
+					</div>
+					<div class="substep-arrow">▸</div>
+					<div class="substep">
+						<div class="substep-title">2. PLAN</div>
+						<div class="substep-desc">write fix steps<br/>to plan file</div>
+					</div>
+					<div class="substep-arrow">▸</div>
+					<div class="substep">
+						<div class="substep-title">3. IMPLEMENT</div>
+						<div class="substep-desc">execute plan<br/>patch code</div>
+					</div>
+				</div>
+			</div>
 
-	<!-- Label sits below the card -->
+			<div class="item item--dashed item--dashed-active">
+				solution.sh · validate progress
+			</div>
+		</div>
+	{:else}
+		<div class="server-card">
+			<div class="top-row">
+				<span class="vm-label">DEV VM</span>
+				<span class="os-label">ubuntu</span>
+			</div>
+			<div class="item item--cli" class:item--active={activeNodeId === 'server'}>
+				CLI Agent
+			</div>
+			<div class="item item--dashed" class:item--dashed-active={activeNodeId === 'server'}>
+				automate_loop.sh
+			</div>
+			<div class="item item--dashed" class:item--dashed-active={activeNodeId === 'server'}>
+				solution.sh
+			</div>
+		</div>
+	{/if}
+
 	<div class="card-label">SERVER</div>
 </HTML>
 
@@ -166,6 +197,75 @@
 
 	.item--dashed.item--dashed-active {
 		border-color: #c9a227;
+	}
+
+	.server-card--expanded {
+		width: 380px;
+		padding: 18px 20px;
+		gap: 10px;
+	}
+
+	.arrow-down {
+		text-align: center;
+		color: #cfcbc0;
+		font-size: 14px;
+		line-height: 1;
+		margin: -4px 0;
+	}
+
+	.loop-container {
+		border: 1.5px dashed #c9a227;
+		border-radius: 8px;
+		padding: 12px 14px;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.loop-header {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 12px;
+		font-weight: 700;
+		color: #1a1a1a;
+		text-align: center;
+	}
+
+	.substeps-row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+	}
+
+	.substep {
+		border: 1.5px solid #cfcbc0;
+		border-radius: 6px;
+		padding: 8px 10px;
+		text-align: center;
+		min-width: 80px;
+		flex: 1;
+		background: #f5f3ec;
+	}
+
+	.substep-title {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 10px;
+		font-weight: 700;
+		color: #1a1a1a;
+		margin-bottom: 4px;
+	}
+
+	.substep-desc {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 8px;
+		color: #cfcbc0;
+		line-height: 1.3;
+	}
+
+	.substep-arrow {
+		color: #cfcbc0;
+		font-size: 12px;
+		flex-shrink: 0;
 	}
 
 	.card-label {
