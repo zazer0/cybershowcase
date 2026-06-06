@@ -1,0 +1,125 @@
+<h2>3D Entity Style</h2>
+<p class="subtitle">Simple 3D shapes with surface detail — closer to the original aesthetic but semantically meaningful. Each entity is a recognizable object viewed mostly head-on, with detail "traced" on the front face.</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #f5f3ec; padding: 28px; display: flex; align-items: center; justify-content: center;">
+      <svg width="440" height="260" viewBox="0 0 440 260">
+        <defs>
+          <filter id="shadow"><feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="#00000015"/></filter>
+          <filter id="glow4"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- ========= CYBERCLAW: Rounded 3D box with isometric depth ========= -->
+        <g transform="translate(70, 80)" filter="url(#shadow)">
+          <!-- Back face (depth) -->
+          <path d="M 8,-3 L 78,-3 L 78,52 L 8,52 Z" fill="#e8e4d8" stroke="#cfcbc0" stroke-width="1"/>
+          <!-- Top face (depth) -->
+          <path d="M 0,0 L 8,-3 L 78,-3 L 70,0 Z" fill="#ede9dd" stroke="#cfcbc0" stroke-width="0.8"/>
+          <!-- Right face (depth) -->
+          <path d="M 70,0 L 78,-3 L 78,52 L 70,55 Z" fill="#ddd9cd" stroke="#cfcbc0" stroke-width="0.8"/>
+          <!-- Front face -->
+          <rect x="0" y="0" width="70" height="55" rx="4" fill="#f5f3ec" stroke="#c9a227" stroke-width="1.8"/>
+
+          <!-- Header on front face -->
+          <rect x="0" y="0" width="70" height="14" rx="4" fill="#c9a227" opacity="0.15"/>
+          <text x="35" y="11" fill="#c9a227" font-family="monospace" font-size="7" text-anchor="middle" font-weight="bold">CYBERCLAW</text>
+
+          <!-- Surface detail: mini status -->
+          <circle cx="12" cy="26" r="3" fill="#c9a227" opacity="0.4"/>
+          <line x1="20" y1="26" x2="55" y2="26" stroke="#cfcbc0" stroke-width="1" opacity="0.3"/>
+          <circle cx="12" cy="36" r="3" fill="none" stroke="#cfcbc0" stroke-width="1" opacity="0.3"/>
+          <line x1="20" y1="36" x2="48" y2="36" stroke="#cfcbc0" stroke-width="1" opacity="0.2"/>
+          <text x="12" y="49" fill="#cfcbc0" font-family="monospace" font-size="5" opacity="0.4">iter 7/11</text>
+
+          <!-- Label below -->
+          <text x="35" y="72" fill="#1a1a1a" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.6">Orchestrator</text>
+        </g>
+
+        <!-- ========= SSH CONNECTION: Dashed line with particle dots ========= -->
+        <g>
+          <line x1="148" y1="107" x2="215" y2="107" stroke="#c9a227" stroke-width="1.5" opacity="0.4" stroke-dasharray="5 3"/>
+          <!-- Animated dots along SSH -->
+          <circle cx="160" cy="107" r="3" fill="#c9a227" opacity="0.5"/>
+          <circle cx="178" cy="107" r="2.5" fill="#c9a227" opacity="0.35"/>
+          <circle cx="196" cy="107" r="2" fill="#c9a227" opacity="0.2"/>
+          <text x="180" y="97" fill="#c9a227" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">SSH</text>
+        </g>
+
+        <!-- ========= DEV VM: Larger 3D box ========= -->
+        <g transform="translate(215, 40)" filter="url(#shadow)">
+          <!-- Back face -->
+          <path d="M 10,-5 L 195,-5 L 195,175 L 10,175 Z" fill="#e8e4d8" stroke="#cfcbc0" stroke-width="1"/>
+          <!-- Top face -->
+          <path d="M 0,0 L 10,-5 L 195,-5 L 185,0 Z" fill="#ede9dd" stroke="#cfcbc0" stroke-width="0.8"/>
+          <!-- Right face -->
+          <path d="M 185,0 L 195,-5 L 195,175 L 185,180 Z" fill="#ddd9cd" stroke="#cfcbc0" stroke-width="0.8"/>
+          <!-- Front face -->
+          <rect x="0" y="0" width="185" height="180" rx="4" fill="#f5f3ec" stroke="#cfcbc0" stroke-width="1.5"/>
+
+          <!-- Header -->
+          <rect x="0" y="0" width="185" height="16" rx="4" fill="#cfcbc0" opacity="0.1"/>
+          <text x="10" y="11" fill="#cfcbc0" font-family="monospace" font-size="7" opacity="0.6">DEV VM</text>
+          <text x="175" y="11" fill="#cfcbc0" font-family="monospace" font-size="6" text-anchor="end" opacity="0.3">ubuntu@dev</text>
+
+          <!-- CLI Agent (small box on front face) -->
+          <rect x="60" y="25" width="65" height="22" rx="3" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.5"/>
+          <text x="92" y="38" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.6">CLI Agent</text>
+
+          <!-- Arrow down -->
+          <line x1="92" y1="47" x2="92" y2="58" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+          <polygon points="88,56 92,62 96,56" fill="#c9a227" opacity="0.3"/>
+
+          <!-- automate_loop boundary (on front face) -->
+          <rect x="12" y="62" width="160" height="105" rx="3" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.35" stroke-dasharray="4 2"/>
+          <text x="92" y="75" fill="#c9a227" font-family="monospace" font-size="7" text-anchor="middle" font-weight="bold" opacity="0.6">automate_loop.sh</text>
+
+          <!-- 3 stages on front face -->
+          <rect x="20" y="82" width="45" height="32" rx="2" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+          <text x="42" y="95" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">DIAGNOSE</text>
+          <text x="42" y="106" fill="#cfcbc0" font-family="monospace" font-size="5" text-anchor="middle" opacity="0.3">root cause</text>
+
+          <text x="73" y="98" fill="#c9a227" font-family="monospace" font-size="8" opacity="0.3">&rarr;</text>
+
+          <rect x="80" y="82" width="38" height="32" rx="2" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+          <text x="99" y="95" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">PLAN</text>
+          <text x="99" y="106" fill="#cfcbc0" font-family="monospace" font-size="5" text-anchor="middle" opacity="0.3">fix steps</text>
+
+          <text x="125" y="98" fill="#c9a227" font-family="monospace" font-size="8" opacity="0.3">&rarr;</text>
+
+          <rect x="130" y="82" width="35" height="32" rx="2" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+          <text x="147" y="95" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">FIX</text>
+          <text x="147" y="106" fill="#cfcbc0" font-family="monospace" font-size="5" text-anchor="middle" opacity="0.3">patch</text>
+
+          <!-- Validator -->
+          <rect x="40" y="125" width="100" height="22" rx="2" fill="none" stroke="#cfcbc0" stroke-width="0.8" opacity="0.3"/>
+          <text x="90" y="139" fill="#cfcbc0" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">solution.sh &bull; validate</text>
+
+          <!-- Success badge -->
+          <rect x="50" y="152" width="55" height="12" rx="2" fill="#c9a227" opacity="0.12"/>
+          <text x="77" y="161" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">13/13 PASS</text>
+        </g>
+
+        <!-- Return arrow (result back to CyberClaw) -->
+        <path d="M 215,200 L 105,200 L 105,140" fill="none" stroke="#cfcbc0" stroke-width="1" opacity="0.2" stroke-dasharray="4 3"/>
+        <polygon points="102,142 105,135 108,142" fill="#cfcbc0" opacity="0.2"/>
+        <text x="155" y="195" fill="#cfcbc0" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.3">result</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>Solid 3D Boxes with Front-Face Detail</h3>
+      <p>CyberClaw and Dev VM are <strong>solid 3D boxes</strong> (like actual servers/machines) with subtle isometric depth. All the detail lives on the front face — status indicators, nested boundaries, sub-process stages. The surface material matches your existing cream/gold palette. In Three.js: BoxGeometry with MeshPhysicalMaterial, detail rendered via HTML overlays or texture. SSH connection is a dashed line with travelling particle dots.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px; padding: 16px; border: 1px solid #cfcbc020; border-radius: 8px;">
+  <h3 style="margin: 0 0 8px 0;">How this maps to Three.js</h3>
+  <p style="font-size: 13px; opacity: 0.7; line-height: 1.6;">
+    <strong>CyberClaw box:</strong> BoxGeometry + MeshPhysicalMaterial (same clearcoat/roughness as current nodes). Front face gets a Threlte <code>&lt;HTML&gt;</code> overlay with monospace labels, or a canvas texture. Slightly smaller than VM box.<br>
+    <strong>Dev VM box:</strong> Larger BoxGeometry. Front face shows nested boundaries (automate_loop, stages) via HTML overlay. Subtle depth with edge lines.<br>
+    <strong>SSH connection:</strong> Same TubeGeometry approach as current arcs, but with animated particles travelling along it (already implemented in StepAnimations).<br>
+    <strong>Active highlighting:</strong> Same spring-based emissive glow from current DiagramNode, applied to whichever entity is active for the current scroll step.<br>
+    <strong>Scroll steps map to:</strong> Step 0 highlights CyberClaw + SSH, Step 1 highlights CyberClaw orchestrator, Step 2 highlights VM + automate_loop stages, Step 3 highlights validator, Step 4 highlights success badge.
+  </p>
+</div>

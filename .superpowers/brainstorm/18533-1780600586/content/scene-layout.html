@@ -1,0 +1,152 @@
+<h2>Scene Layout — 3D Positioning</h2>
+<p class="subtitle">Where each entity sits in 3D space, viewed from the current camera angle (0, 0.5, 7).</p>
+
+<div class="mockup">
+  <div class="mockup-header">Camera view: PerspectiveCamera at [0, 0.5, 7], FOV 60, looking at origin</div>
+  <div class="mockup-body" style="background: #f5f3ec; padding: 32px; display: flex; align-items: center; justify-content: center;">
+    <svg width="500" height="320" viewBox="0 0 500 320">
+      <defs>
+        <filter id="ds"><feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#00000012"/></filter>
+        <marker id="ar" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6" fill="none" stroke="#c9a227" stroke-width="1.2"/>
+        </marker>
+      </defs>
+
+      <!-- Coordinate guide -->
+      <text x="250" y="15" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.4">3D world: X=left/right, Y=up/down, Z=toward camera</text>
+
+      <!-- ========= CYBERCLAW ENTITY ========= -->
+      <g transform="translate(85, 80)" filter="url(#ds)">
+        <!-- 3D box suggestion -->
+        <path d="M 6,-4 L 106,-4 L 106,116 L 6,116 Z" fill="#e8e4d8" stroke="#cfcbc0" stroke-width="0.8"/>
+        <path d="M 0,0 L 6,-4 L 106,-4 L 100,0 Z" fill="#ede9dd" stroke="#cfcbc0" stroke-width="0.6"/>
+        <path d="M 100,0 L 106,-4 L 106,116 L 100,120 Z" fill="#ddd9cd" stroke="#cfcbc0" stroke-width="0.6"/>
+        <rect x="0" y="0" width="100" height="120" rx="4" fill="#f5f3ec" stroke="#c9a227" stroke-width="2"/>
+
+        <!-- Header -->
+        <rect x="0" y="0" width="100" height="18" rx="4" fill="#c9a227" opacity="0.15"/>
+        <text x="50" y="13" fill="#c9a227" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">CYBERCLAW</text>
+
+        <!-- Sub-regions -->
+        <rect x="8" y="26" width="84" height="38" rx="3" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+        <text x="50" y="42" fill="#c9a227" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">ORCHESTRATOR</text>
+        <text x="50" y="54" fill="#cfcbc0" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.3">check logs / commit</text>
+
+        <rect x="8" y="70" width="84" height="28" rx="3" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3" stroke-dasharray="3 2"/>
+        <text x="50" y="84" fill="#cfcbc0" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.4">spawn agent via SSH</text>
+        <text x="50" y="93" fill="#cfcbc0" font-family="monospace" font-size="5" text-anchor="middle" opacity="0.3">reset infra if needed</text>
+
+        <!-- Status -->
+        <circle cx="15" cy="107" r="3" fill="#c9a227" opacity="0.4"/>
+        <text x="24" y="110" fill="#cfcbc0" font-family="monospace" font-size="5" opacity="0.3">iter 7/11</text>
+
+        <!-- Position label -->
+        <text x="50" y="140" fill="#1a1a1a" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">pos: [-2.5, 0.3, 0]</text>
+        <text x="50" y="150" fill="#1a1a1a" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">size: ~1.8 x 2.2 x 0.3</text>
+      </g>
+
+      <!-- ========= SSH CONNECTION ========= -->
+      <g>
+        <line x1="191" y1="140" x2="275" y2="140" stroke="#c9a227" stroke-width="2" opacity="0.4" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+        <circle cx="210" cy="140" r="3.5" fill="#c9a227" opacity="0.5"/>
+        <circle cx="232" cy="140" r="3" fill="#c9a227" opacity="0.35"/>
+        <circle cx="254" cy="140" r="2.5" fill="#c9a227" opacity="0.2"/>
+        <text x="233" y="128" fill="#c9a227" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.6">SSH</text>
+        <text x="233" y="160" fill="#1a1a1a" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.4">TubeGeometry + particles</text>
+      </g>
+
+      <!-- ========= DEV VM ENTITY ========= -->
+      <g transform="translate(275, 30)" filter="url(#ds)">
+        <!-- 3D box -->
+        <path d="M 8,-5 L 208,-5 L 208,255 L 8,255 Z" fill="#e8e4d8" stroke="#cfcbc0" stroke-width="0.8"/>
+        <path d="M 0,0 L 8,-5 L 208,-5 L 200,0 Z" fill="#ede9dd" stroke="#cfcbc0" stroke-width="0.6"/>
+        <path d="M 200,0 L 208,-5 L 208,255 L 200,260 Z" fill="#ddd9cd" stroke="#cfcbc0" stroke-width="0.6"/>
+        <rect x="0" y="0" width="200" height="260" rx="4" fill="#f5f3ec" stroke="#cfcbc0" stroke-width="1.8"/>
+
+        <!-- Header -->
+        <rect x="0" y="0" width="200" height="18" rx="4" fill="#cfcbc0" opacity="0.08"/>
+        <text x="12" y="13" fill="#cfcbc0" font-family="monospace" font-size="8" opacity="0.6">DEV VM</text>
+        <text x="188" y="13" fill="#cfcbc0" font-family="monospace" font-size="6" text-anchor="end" opacity="0.3">ubuntu@dev</text>
+
+        <!-- CLI Agent -->
+        <rect x="60" y="28" width="80" height="25" rx="3" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.4"/>
+        <text x="100" y="42" fill="#c9a227" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.6">CLI Agent</text>
+        <text x="100" y="49" fill="#cfcbc0" font-family="monospace" font-size="5" text-anchor="middle" opacity="0.3">ssh session</text>
+
+        <!-- Arrow to automate_loop -->
+        <line x1="100" y1="53" x2="100" y2="68" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+        <polygon points="97,66 100,72 103,66" fill="#c9a227" opacity="0.3"/>
+
+        <!-- automate_loop boundary -->
+        <rect x="10" y="72" width="180" height="120" rx="3" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.4" stroke-dasharray="4 2"/>
+        <text x="100" y="86" fill="#c9a227" font-family="monospace" font-size="7" text-anchor="middle" font-weight="bold" opacity="0.6">automate_loop.sh</text>
+
+        <!-- 3 stages -->
+        <rect x="18" y="95" width="52" height="35" rx="2" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+        <text x="44" y="110" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">DIAGNOSE</text>
+        <text x="44" y="122" fill="#cfcbc0" font-family="monospace" font-size="5" text-anchor="middle" opacity="0.3">root cause</text>
+
+        <text x="78" y="113" fill="#c9a227" opacity="0.3" font-size="10">&rarr;</text>
+
+        <rect x="85" y="95" width="40" height="35" rx="2" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+        <text x="105" y="110" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">PLAN</text>
+        <text x="105" y="122" fill="#cfcbc0" font-family="monospace" font-size="5" text-anchor="middle" opacity="0.3">fix steps</text>
+
+        <text x="132" y="113" fill="#c9a227" opacity="0.3" font-size="10">&rarr;</text>
+
+        <rect x="138" y="95" width="44" height="35" rx="2" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+        <text x="160" y="110" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">FIX</text>
+        <text x="160" y="122" fill="#cfcbc0" font-family="monospace" font-size="5" text-anchor="middle" opacity="0.3">patch code</text>
+
+        <!-- Validator -->
+        <rect x="35" y="140" width="120" height="28" rx="2" fill="none" stroke="#cfcbc0" stroke-width="0.8" opacity="0.35"/>
+        <text x="95" y="156" fill="#cfcbc0" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">solution.sh &bull; validate</text>
+
+        <!-- Retry arrow -->
+        <path d="M 155,154 L 175,154 L 175,88 L 100,88 L 100,95" fill="none" stroke="#cfcbc0" stroke-width="0.6" opacity="0.2" stroke-dasharray="3 2"/>
+
+        <!-- Success badge -->
+        <rect x="55" y="200" width="70" height="18" rx="3" fill="#c9a227" opacity="0.12"/>
+        <text x="90" y="212" fill="#c9a227" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.5">13/13 PASS</text>
+
+        <!-- Position label -->
+        <text x="100" y="240" fill="#1a1a1a" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">pos: [1.8, 0, 0]</text>
+        <text x="100" y="250" fill="#1a1a1a" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">size: ~3.2 x 4.0 x 0.3</text>
+      </g>
+
+      <!-- Return path -->
+      <path d="M 275,270 L 160,270 L 160,205" fill="none" stroke="#cfcbc0" stroke-width="1" opacity="0.2" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+      <text x="215" y="264" fill="#cfcbc0" font-family="monospace" font-size="6" text-anchor="middle" opacity="0.3">result</text>
+    </svg>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>Coordinate Mapping</h3>
+  <table style="width: 100%; font-family: monospace; font-size: 13px; border-collapse: collapse;">
+    <tr style="border-bottom: 1px solid #cfcbc020;">
+      <td style="padding: 6px; opacity: 0.6;">CyberClaw</td>
+      <td style="padding: 6px; opacity: 0.5;">[-2.5, 0.3, 0]</td>
+      <td style="padding: 6px; opacity: 0.5;">~1.8w x 2.2h x 0.3d</td>
+      <td style="padding: 6px; opacity: 0.4;">Gold border, smaller box</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #cfcbc020;">
+      <td style="padding: 6px; opacity: 0.6;">SSH</td>
+      <td style="padding: 6px; opacity: 0.5;">between entities</td>
+      <td style="padding: 6px; opacity: 0.5;">TubeGeometry</td>
+      <td style="padding: 6px; opacity: 0.4;">Dashed, animated particles</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #cfcbc020;">
+      <td style="padding: 6px; opacity: 0.6;">Dev VM</td>
+      <td style="padding: 6px; opacity: 0.5;">[1.8, 0, 0]</td>
+      <td style="padding: 6px; opacity: 0.5;">~3.2w x 4.0h x 0.3d</td>
+      <td style="padding: 6px; opacity: 0.4;">Muted border, larger box</td>
+    </tr>
+    <tr>
+      <td style="padding: 6px; opacity: 0.6;">Camera</td>
+      <td style="padding: 6px; opacity: 0.5;">[0, 0.5, 7]</td>
+      <td style="padding: 6px; opacity: 0.5;">FOV 60</td>
+      <td style="padding: 6px; opacity: 0.4;">Unchanged from current</td>
+    </tr>
+  </table>
+</div>

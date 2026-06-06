@@ -1,0 +1,194 @@
+<h2>Node Shape Language</h2>
+<p class="subtitle">Each node in the cycle should have a distinct 3D shape that communicates its role. Which direction feels right for representing these system components?</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #1a1a2e; padding: 32px; display: flex; align-items: center; justify-content: center;">
+      <svg width="320" height="200" viewBox="0 0 320 200">
+        <!-- Technical blueprint style nodes -->
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <!-- Grid background -->
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#ffffff08" stroke-width="0.5"/>
+        </pattern>
+        <rect width="320" height="200" fill="url(#grid)"/>
+
+        <!-- Trigger: Terminal/prompt icon -->
+        <g transform="translate(50,50)" filter="url(#glow)">
+          <rect x="-20" y="-15" width="40" height="30" rx="3" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.8"/>
+          <text x="-12" y="3" fill="#c9a227" font-family="monospace" font-size="10" opacity="0.9">$_</text>
+          <text x="-20" y="35" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="start">TRIGGER</text>
+        </g>
+
+        <!-- Orchestrate: Router/hub icon -->
+        <g transform="translate(160,50)" filter="url(#glow)">
+          <polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="0" cy="0" r="4" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.6"/>
+          <line x1="0" y1="-8" x2="0" y2="-16" stroke="#c9a227" stroke-width="0.8" opacity="0.5"/>
+          <line x1="7" y1="4" x2="14" y2="8" stroke="#c9a227" stroke-width="0.8" opacity="0.5"/>
+          <line x1="-7" y1="4" x2="-14" y2="8" stroke="#c9a227" stroke-width="0.8" opacity="0.5"/>
+          <text x="0" y="35" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">ORCHESTRATE</text>
+        </g>
+
+        <!-- Coding Agent: Code block / brackets -->
+        <g transform="translate(270,50)" filter="url(#glow)">
+          <rect x="-22" y="-18" width="44" height="36" rx="2" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.8" stroke-dasharray="4 2"/>
+          <text x="-10" y="-2" fill="#c9a227" font-family="monospace" font-size="11" opacity="0.9">{...}</text>
+          <text x="0" y="35" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">CODING</text>
+        </g>
+
+        <!-- Validator: Shield/checkmark -->
+        <g transform="translate(100,140)" filter="url(#glow)">
+          <path d="M0,-20 L15,-12 L15,5 L0,20 L-15,5 L-15,-12 Z" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.8"/>
+          <polyline points="-6,2 -2,8 8,-6" fill="none" stroke="#c9a227" stroke-width="2" opacity="0.9"/>
+          <text x="0" y="35" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">VALIDATOR</text>
+        </g>
+
+        <!-- Resolution: Flag/output -->
+        <g transform="translate(230,140)" filter="url(#glow)">
+          <circle cx="0" cy="0" r="16" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="0" cy="0" r="8" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.5"/>
+          <circle cx="0" cy="0" r="2" fill="#c9a227" opacity="0.7"/>
+          <text x="0" y="35" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">RESOLUTION</text>
+        </g>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>A: Iconic Wireframes</h3>
+      <p>Each node is a distinct wireframe shape that <strong>symbolizes</strong> its role: terminal prompt (trigger), hexagonal hub (orchestrate), code brackets (coding), shield (validator), bullseye (resolution). Clean, minimal, instantly readable.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #1a1a2e; padding: 32px; display: flex; align-items: center; justify-content: center;">
+      <svg width="320" height="200" viewBox="0 0 320 200">
+        <defs>
+          <filter id="glow2"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <pattern id="grid2" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#ffffff08" stroke-width="0.5"/>
+        </pattern>
+        <rect width="320" height="200" fill="url(#grid2)"/>
+
+        <!-- Trigger: 3D box with wireframe -->
+        <g transform="translate(50,55)" filter="url(#glow2)">
+          <path d="M0,-18 L20,-8 L20,12 L0,22 L-20,12 L-20,-8 Z" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.4"/>
+          <path d="M0,-18 L20,-8 L0,2 L-20,-8 Z" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <path d="M0,2 L20,-8 L20,12 L0,22 Z" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.5"/>
+          <path d="M0,2 L-20,-8 L-20,12 L0,22 Z" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.3"/>
+          <text x="0" y="38" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">INPUT</text>
+        </g>
+
+        <!-- Orchestrate: Rotating octahedron wireframe -->
+        <g transform="translate(160,55)" filter="url(#glow2)">
+          <polygon points="0,-22 18,0 0,22 -18,0" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.8"/>
+          <line x1="-18" y1="0" x2="18" y2="0" stroke="#c9a227" stroke-width="0.8" opacity="0.4"/>
+          <line x1="0" y1="-22" x2="0" y2="22" stroke="#c9a227" stroke-width="0.8" opacity="0.4"/>
+          <ellipse cx="0" cy="0" rx="12" ry="5" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3" transform="rotate(-15)"/>
+          <text x="0" y="38" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">ORCHESTRATE</text>
+        </g>
+
+        <!-- Coding: Cylinder with data lines -->
+        <g transform="translate(270,55)" filter="url(#glow2)">
+          <ellipse cx="0" cy="-14" rx="18" ry="6" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <line x1="-18" y1="-14" x2="-18" y2="14" stroke="#c9a227" stroke-width="1" opacity="0.6"/>
+          <line x1="18" y1="-14" x2="18" y2="14" stroke="#c9a227" stroke-width="1" opacity="0.6"/>
+          <ellipse cx="0" cy="14" rx="18" ry="6" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <line x1="-10" y1="-6" x2="6" y2="-6" stroke="#c9a227" stroke-width="0.6" opacity="0.3"/>
+          <line x1="-10" y1="0" x2="10" y2="0" stroke="#c9a227" stroke-width="0.6" opacity="0.3"/>
+          <line x1="-10" y1="6" x2="3" y2="6" stroke="#c9a227" stroke-width="0.6" opacity="0.3"/>
+          <text x="0" y="38" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">CODING</text>
+        </g>
+
+        <!-- Validator: Geodesic sphere wireframe -->
+        <g transform="translate(100,145)" filter="url(#glow2)">
+          <circle cx="0" cy="0" r="18" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <ellipse cx="0" cy="0" rx="18" ry="7" fill="none" stroke="#c9a227" stroke-width="0.7" opacity="0.3"/>
+          <ellipse cx="0" cy="0" rx="7" ry="18" fill="none" stroke="#c9a227" stroke-width="0.7" opacity="0.3"/>
+          <ellipse cx="0" cy="0" rx="13" ry="18" fill="none" stroke="#c9a227" stroke-width="0.5" opacity="0.2" transform="rotate(30)"/>
+          <text x="0" y="33" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">VALIDATOR</text>
+        </g>
+
+        <!-- Resolution: Star/burst wireframe -->
+        <g transform="translate(230,145)" filter="url(#glow2)">
+          <polygon points="0,-20 5,-7 18,-7 8,2 12,16 0,8 -12,16 -8,2 -18,-7 -5,-7" fill="none" stroke="#c9a227" stroke-width="1.2" opacity="0.7"/>
+          <circle cx="0" cy="0" r="5" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.5"/>
+          <text x="0" y="33" fill="#cfcbc0" font-family="monospace" font-size="8" text-anchor="middle">RESOLUTION</text>
+        </g>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>B: Geometric Primitives</h3>
+      <p>Each node is a different <strong>3D wireframe primitive</strong>: cube (input), octahedron (orchestrate), cylinder (coding), geodesic sphere (validator), star (resolution). More abstract, but the shapes themselves carry meaning through convention (octahedron = hub/router, cylinder = process).</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #1a1a2e; padding: 32px; display: flex; align-items: center; justify-content: center;">
+      <svg width="320" height="200" viewBox="0 0 320 200">
+        <defs>
+          <filter id="glow3"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <pattern id="grid3" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#ffffff08" stroke-width="0.5"/>
+        </pattern>
+        <rect width="320" height="200" fill="url(#grid3)"/>
+
+        <!-- Trigger: Rounded rect with label + small icon -->
+        <g transform="translate(50,55)" filter="url(#glow3)">
+          <rect x="-28" y="-18" width="56" height="36" rx="6" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <rect x="-28" y="-18" width="56" height="12" rx="6" fill="none" stroke="#c9a227" stroke-width="0" opacity="0.08" style="fill:#c9a227"/>
+          <text x="-14" y="-9" fill="#1a1a2e" font-family="monospace" font-size="7" font-weight="bold">INPUT</text>
+          <text x="-20" y="8" fill="#c9a227" font-family="monospace" font-size="8" opacity="0.7">$ ssh vm</text>
+          <circle cx="22" cy="-12" r="3" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.5"/>
+        </g>
+
+        <!-- Orchestrate: Card with status indicators -->
+        <g transform="translate(160,55)" filter="url(#glow3)">
+          <rect x="-30" y="-20" width="60" height="40" rx="4" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <rect x="-30" y="-20" width="60" height="12" rx="4" fill="none" stroke="#c9a227" stroke-width="0" opacity="0.08" style="fill:#c9a227"/>
+          <text x="-16" y="-11" fill="#1a1a2e" font-family="monospace" font-size="7" font-weight="bold">ORCH</text>
+          <circle cx="-20" cy="4" r="2.5" fill="#c9a227" opacity="0.6"/>
+          <line x1="-14" y1="4" x2="8" y2="4" stroke="#c9a227" stroke-width="0.8" opacity="0.4"/>
+          <circle cx="-20" cy="12" r="2.5" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+          <line x1="-14" y1="12" x2="12" y2="12" stroke="#c9a227" stroke-width="0.8" opacity="0.3"/>
+        </g>
+
+        <!-- Coding: Card with code preview -->
+        <g transform="translate(270,55)" filter="url(#glow3)">
+          <rect x="-30" y="-20" width="60" height="40" rx="4" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <rect x="-30" y="-20" width="60" height="12" rx="4" fill="none" stroke="#c9a227" stroke-width="0" opacity="0.08" style="fill:#c9a227"/>
+          <text x="-16" y="-11" fill="#1a1a2e" font-family="monospace" font-size="7" font-weight="bold">CODE</text>
+          <text x="-22" y="3" fill="#c9a227" font-family="monospace" font-size="6" opacity="0.5">fn fix() {</text>
+          <text x="-22" y="12" fill="#c9a227" font-family="monospace" font-size="6" opacity="0.4">  patch()</text>
+        </g>
+
+        <!-- Validator: Card with progress -->
+        <g transform="translate(100,145)" filter="url(#glow3)">
+          <rect x="-30" y="-20" width="60" height="40" rx="4" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <rect x="-30" y="-20" width="60" height="12" rx="4" fill="none" stroke="#c9a227" stroke-width="0" opacity="0.08" style="fill:#c9a227"/>
+          <text x="-16" y="-11" fill="#1a1a2e" font-family="monospace" font-size="7" font-weight="bold">VALID</text>
+          <rect x="-22" y="2" width="44" height="5" rx="2" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.4"/>
+          <rect x="-22" y="2" width="35" height="5" rx="2" fill="#c9a227" opacity="0.3"/>
+          <text x="-22" y="16" fill="#c9a227" font-family="monospace" font-size="6" opacity="0.5">13/13 OK</text>
+        </g>
+
+        <!-- Resolution: Card with check -->
+        <g transform="translate(230,145)" filter="url(#glow3)">
+          <rect x="-28" y="-18" width="56" height="36" rx="6" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+          <rect x="-28" y="-18" width="56" height="12" rx="6" fill="none" stroke="#c9a227" stroke-width="0" opacity="0.08" style="fill:#c9a227"/>
+          <text x="-14" y="-9" fill="#1a1a2e" font-family="monospace" font-size="7" font-weight="bold">DONE</text>
+          <polyline points="-8,6 -2,14 12,-2" fill="none" stroke="#c9a227" stroke-width="2" opacity="0.8"/>
+        </g>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>C: Mini Dashboard Cards</h3>
+      <p>Each node is a small <strong>3D floating card/panel</strong> with a header bar, monospace labels, and contextual micro-content (code snippets, progress bars, status dots). Like miniature dashboard widgets floating in 3D space. Most literal representation.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top: 24px; opacity: 0.6;">Click to select. You can also mix elements from multiple options.</p>
