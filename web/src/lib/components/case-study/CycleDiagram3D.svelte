@@ -29,7 +29,7 @@
 <div class="canvas-wrapper">
 	<Canvas {createRenderer}>
 		<DiagramScene {activeNodeId} {activeArcId} />
-		<MCPBridgeComponent />
+		<MCPBridgeComponent reconnectDelay={3000} />
 	</Canvas>
 </div>
 
