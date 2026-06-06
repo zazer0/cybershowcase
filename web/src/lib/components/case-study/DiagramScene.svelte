@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { T } from '@threlte/core';
+	import { T, useTask } from '@threlte/core';
+	import type { PerspectiveCamera } from 'three';
+	import { getCameraConfig } from './animationData.js';
 	import AgentCard from './AgentCard.svelte';
 	import ServerCard from './ServerCard.svelte';
 	import SSHArrow from './SSHArrow.svelte';
@@ -13,14 +15,48 @@
 		activeArcId: string | null;
 		activeStepIndex: number;
 	} = $props();
+
+	let cameraRef: PerspectiveCamera | undefined;
+	let targetConfig = $derived(getCameraConfig(activeStepIndex));
+
+	let camX = $state(0);
+	let camY = $state(0);
+	let camZ = $state(10);
+	let camFov = $state(60);
+	let lookX = $state(0);
+	let lookY = $state(0);
+	let lookZ = $state(0);
+
+	const CAMERA_SPRING = 4;
+
+	useTask((delta) => {
+		if (!cameraRef) return;
+		const dt = Math.min(delta, 0.1);
+		const k = CAMERA_SPRING * dt;
+
+		camX += (targetConfig.position[0] - camX) * k;
+		camY += (targetConfig.position[1] - camY) * k;
+		camZ += (targetConfig.position[2] - camZ) * k;
+		camFov += (targetConfig.fov - camFov) * k;
+		lookX += (targetConfig.lookAt[0] - lookX) * k;
+		lookY += (targetConfig.lookAt[1] - lookY) * k;
+		lookZ += (targetConfig.lookAt[2] - lookZ) * k;
+
+		cameraRef.position.set(camX, camY, camZ);
+		cameraRef.fov = camFov;
+		cameraRef.updateProjectionMatrix();
+		cameraRef.lookAt(lookX, lookY, lookZ);
+	});
 </script>
 
-<!-- Camera: pulled back to z=10 for wider two-panel layout -->
 <T.PerspectiveCamera
 	makeDefault
 	position={[0, 0, 10]}
 	fov={60}
-	oncreate={(ref) => ref.lookAt(0, 0, 0)}
+	oncreate={(ref) => {
+		cameraRef = ref;
+		ref.lookAt(0, 0, 0);
+	}}
 />
 
 <!--
