@@ -1,0 +1,120 @@
+# Required Visuals
+
+Note: consider the below "additive requirements"; if an aspect/entity is not mentioned, assume it should stay the same exactly as is.
+
+## Entity Design
+
+### Dev VM (Server)
+
+**What it represents:** The remote development VM that CyberClaw SSHs into. Contains the CLI agent session, automate_loop.sh, and the validation script.
+
+**Visual appearance:**
+- A 3D box of similar size to CyberClaw — standard rectangular server shape
+- Visually distinct from CyberClaw: no chamfered corners, no orbit ring, no floating animation — it's infrastructure, not an agent. Uses muted border color instead of gold.
+- Front face shows at "full view" zoom level:
+  - "DEV VM" header label
+  - "CLI Agent" sub-region (the SSH session that landed)
+  - "automate_loop.sh" as a collapsed/labeled rect (detail not readable at this zoom)
+  - "solution.sh" validator sub-region
+
+**Zoom behavior (critical):**
+- At all steps except Step 2, the automate_loop detail is collapsed — just a labeled boundary. This prevents visual overload.
+- At Step 2, the camera zooms into the Dev VM, and the automate_loop section expands to show its full 3-stage detail (see Step 2 below).
+- The transition between collapsed and expanded should be smooth — either a CSS/opacity transition on the HTML overlay content, or a geometry-level scale animation.
+
+**Sub-regions (highlighted per step):**
+1. Whole box dims to background (Steps 0-1, focus is on CyberClaw)
+2. automate_loop stages (Step 2 — zoomed in, see below)
+3. Validator sub-region (Step 3 — solution.sh)
+4. Success badge (Step 4)
+
+## Scroll Step Behavior
+
+### Step 0: User Input (TRIGGER)
+
+**Camera:** Full system view -- both entities visible, centered.
+
+**What the viewer sees:**
+
+- CyberClaw box glows with gold accent -- it's receiving the user's instruction
+- The "eye"/core icon on CyberClaw pulses subtly (agent is "activating")
+- SSH connection particles begin travelling toward the VM (agent is about to dispatch)
+- Dev VM is visible but dim/inactive
+
+**What it communicates:** "The user gives an instruction, and the CyberClaw agent receives it."
+
+### Step 1: Orchestration
+
+**Camera:** Full system view.
+
+**What the viewer sees:**
+
+- CyberClaw's "orchestrator" sub-region highlights with a gold border/glow
+- Status dots on CyberClaw animate (showing iteration progress)
+- Particles pulse along the return path (agent is checking prior run logs)
+- SSH connection shows data flowing (agent is communicating with the VM)
+- Dev VM is visible but secondary
+
+**What it communicates:** "The agent checks what happened last time -- did it make progress? Should it commit and continue, or reset and retry?"
+
+### Step 2: Diagnosis & Fix (CODING AGENT)
+
+**Camera:** Smoothly zooms into the Dev VM, centering on the automate_loop section. CyberClaw slides partially or fully out of view (or fades to a hint at the edge). Transition should take ~700-800ms.
+
+**What the viewer sees (zoomed in):**
+
+- Dev VM fills most of the viewport
+- automate_loop.sh boundary is now fully expanded and readable
+- Three stages visible inside: **DIAGNOSE → PLAN → IMPLEMENT**
+- Each stage has a label and brief description text
+- Stages light up sequentially in a continuous loop (left to right) -- DIAGNOSE glows gold, then PLAN, then IMPLEMENT, then the cycle repeats. Each stage stays lit for ~1-1.5s before the highlight moves to the next. This loops as long as Step 2 is active.
+- Small particles/arrows flow between stages showing data progression
+- The "CLI Agent" sub-region above automate_loop shows this is a spawned SSH session
+- A faint retry arrow loops from the end back to the beginning (showing the internal retry loop)
+
+**What it communicates:** "Inside the VM, the spawned agent runs a 3-stage process: investigate the error, plan the fix, then implement it."
+
+### Step 3: Validation
+
+**Camera:** Smoothly zooms back out to the full system view (~700-800ms transition).
+
+**What the viewer sees:**
+
+- Camera pulls back, both entities visible again
+- Dev VM's "solution.sh / validator" sub-region highlights
+- Converging animation toward the validator region (particles spiraling inward -- similar to the existing validator animation concept)
+- Return path from VM back to CyberClaw begins to glow (result is about to flow back)
+
+**What it communicates:** "The system validates the fix by running solution.sh. Did the tests pass?"
+
+### Step 4: Success (RESOLUTION)
+
+**Camera:** Full system view.
+
+**What the viewer sees:**
+
+- Both entities glow with gold accent -- the whole system succeeded
+- A "13/13 PASS" success badge on the Dev VM pulses
+- SSH connection pulses completely (full circuit complete)
+- Return path fully lit -- result successfully returned to CyberClaw
+- Status dots on CyberClaw show completion
+- Overall scene feels "resolved" -- warm, complete, satisfied
+
+**What it communicates:** "After 6+ hours and 11 iterations, all 13 tests pass autonomously."
+* * *
+
+## Visual Principles
+
+1. **Agent vs Infrastructure:**CyberClaw must read as an intelligent agent (floating, orbit ring, "eye" icon). Dev VM must read as infrastructure (grounded, static, muted borders). The SSH connection is the bridge between them.
+
+2. **Progressive disclosure:** Don't show all detail at once. automate_loop's 3-stage detail is only visible during Step 2 zoom. At other steps, it's collapsed to avoid cognitive overload.
+
+3. **Consistent highlighting:** Active sub-regions use the same gold accent color (#C9A227) with emissive glow. Inactive regions use the muted palette (#CFCBC0). Transitions should be smooth (~500-700ms spring-based).
+
+4. **Particles communicate data flow:** Particles always travel in the direction of data/command flow. SSH particles go from CyberClaw → VM. Stage particles flow DIAGNOSE → PLAN → IMPLEMENT. Return path particles go from VM → CyberClaw.
+
+5. **Camera movement is minimal and purposeful:** Only one camera transition (zoom into VM for Step 2, zoom back out for Step 3). No gratuitous orbiting or rotation. The camera serves the narrative.
+
+6. **Color palette unchanged:** Gold (#C9A227), muted (#CFCBC0), ink (#1A1A1A), cream (#F5F3EC). No new colors. The existing palette is strong.
+
+7. **Not sci-fi, not cringe:** No bloom post-processing, no laser beams, no holographic effects. Clean, technical, understated. The impressiveness comes from the clarity of what's being communicated, not from visual noise.
