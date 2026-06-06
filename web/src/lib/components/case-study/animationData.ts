@@ -71,9 +71,9 @@ export const DEFAULT_CAMERA: CameraConfig = {
 };
 
 export const STEP2_CAMERA: CameraConfig = {
-	position: [3.0, 0.1, 5.5],
-	lookAt: [3.0, 0.1, 0],
-	fov: 50
+	position: [3.0, -0.1, 5.4],
+	lookAt: [3.0, -0.1, 0],
+	fov: 46
 };
 
 export function getCameraConfig(stepIndex: number): CameraConfig {

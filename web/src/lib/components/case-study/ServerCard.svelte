@@ -219,8 +219,8 @@
 	}
 
 	.server-card--expanded {
-		width: 380px;
-		padding: 18px 20px;
+		width: 340px;
+		padding: 16px 18px;
 		gap: 10px;
 	}
 
