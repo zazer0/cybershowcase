@@ -13,6 +13,22 @@ function readHookInput() {
   return JSON.parse(readFileSync("/dev/stdin", "utf8"));
 }
 
+// ── Scroll-targets registry ───────────────────────────────
+function loadScrollTarget(repoRoot) {
+  const activeFile = join(repoRoot, ".ui-verify", "active-target");
+  const registryFile = join(repoRoot, ".ui-verify", "scroll-targets.json");
+
+  if (!existsSync(activeFile) || !existsSync(registryFile)) return null;
+
+  const key = readFileSync(activeFile, "utf8").trim();
+  if (!key) return null;
+
+  const registry = JSON.parse(readFileSync(registryFile, "utf8"));
+  if (!(key in registry)) return null;
+
+  return registry[key];
+}
+
 // ── Parse UI_VERIFICATION_CONTRACT from last_assistant_message ──
 // Returns { task, routes, viewports, acceptance } or null.
 function parseContract(text) {
@@ -57,17 +73,22 @@ function parseContract(text) {
 
 // ── Screenshot with Playwright ─────────────────────────────
 // Returns array of { path, route, viewport }.
-async function captureScreenshots(contract) {
+async function captureScreenshots(contract, registryTarget) {
   mkdirSync(WORK_DIR, { recursive: true });
   const browser = await chromium.launch({ headless: true });
   const shots = [];
 
   for (const route of contract.routes) {
+    // Registry target takes priority, then contract's >> selector, then no scroll
+    const scrollTo = registryTarget !== null
+      ? registryTarget.scrollTo
+      : route.scrollTo;
+
     for (const vp of contract.viewports) {
       const [w, h] = vp.split("x").map(Number);
       const urlSlug = route.url.replace(/[^a-z0-9]/gi, "-").replace(/-+/g, "-");
-      const scrollSlug = route.scrollTo
-        ? "_scroll-" + route.scrollTo.replace(/[^a-z0-9]/gi, "-").replace(/-+/g, "-")
+      const scrollSlug = scrollTo
+        ? "_scroll-" + String(scrollTo).replace(/[^a-z0-9]/gi, "-").replace(/-+/g, "-")
         : "";
       const filename = `${urlSlug}${scrollSlug}_${vp}.png`;
       const filepath = join(WORK_DIR, filename);
@@ -76,9 +97,12 @@ async function captureScreenshots(contract) {
       const page = await ctx.newPage();
       await page.goto(route.url, { waitUntil: "networkidle", timeout: 30_000 });
 
-      if (route.scrollTo) {
-        await page.waitForSelector(route.scrollTo, { timeout: 10_000 });
-        const el = await page.$(route.scrollTo);
+      if (scrollTo === "__BOTTOM__") {
+        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await page.waitForTimeout(500);
+      } else if (scrollTo) {
+        await page.waitForSelector(scrollTo, { timeout: 10_000 });
+        const el = await page.$(scrollTo);
         await el.scrollIntoViewIfNeeded();
         await page.waitForTimeout(500);
       }
@@ -86,7 +110,7 @@ async function captureScreenshots(contract) {
       await page.screenshot({ path: filepath, fullPage: false });
       await ctx.close();
 
-      shots.push({ path: filepath, route: route.url, viewport: vp, scrollTo: route.scrollTo });
+      shots.push({ path: filepath, route: route.url, viewport: vp, scrollTo });
     }
   }
 
@@ -199,7 +223,8 @@ async function main() {
     process.exit(0); // No contract → not a UI task → allow through
   }
 
-  const shots = await captureScreenshots(contract);
+  const registryTarget = loadScrollTarget(repoRoot);
+  const shots = await captureScreenshots(contract, registryTarget);
   persistScreenshots(shots, repoRoot);
 
   const refDir = join(repoRoot, ".ui-verify", "reference");

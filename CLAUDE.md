@@ -108,6 +108,35 @@ acceptance:
 
 Rules:
 - `task` — required, single line
-- `routes` — required, at least one. Must be reachable (dev server running). Append `>> .css-selector` to scroll that element into view before the screenshot. Without `>>`, the screenshot captures the initial viewport (top of page).
+- `routes` — required, at least one. Must be reachable (dev server running). You can still append `>> .css-selector` as a fallback, but scroll position is now driven by the scroll-targets registry (see below).
 - `viewports` — optional. Defaults to 1440x900 and 390x844
 - `acceptance` — required, at least two items. Must be visually verifiable from a screenshot
+
+## Scroll-Targets Registry
+
+The verification hook uses a file-based registry to control which section of the page gets screenshotted.
+
+### Files
+
+- **`.ui-verify/scroll-targets.json`** — maps named keys to CSS selectors (or `null` / `"__BOTTOM__"`).
+- **`.ui-verify/active-target`** — plain text file containing the active key name.
+
+### Available targets
+
+| Key | Scrolls to |
+|---|---|
+| `first-load` | No scroll (top of page) |
+| `step-zero` | Step 0 — User Input |
+| `step-one` | Step 1 — Orchestration |
+| `step-two` | Step 2 — Diagnosis & Fix |
+| `step-three` | Step 3 — Validation |
+| `output` | Output — Success |
+| `bottom` | Bottom of page (`window.scrollTo(0, document.body.scrollHeight)`) |
+
+### How it works
+
+1. At the start of a UI task, read `.ui-verify/active-target` to understand which section is being verified.
+2. The hook reads the active target key, looks it up in `scroll-targets.json`, and uses that `scrollTo` value instead of parsing `>> .selector` from the contract routes.
+3. If the user says "now work on step two", update `.ui-verify/active-target` to `step-two`.
+4. The contract route should still specify the URL (e.g. `http://localhost:5173/`) but no longer needs `>> .selector` — the registry handles scroll positioning.
+5. If `.ui-verify/active-target` doesn't exist or the key isn't found, the hook falls back to the contract's `>> .selector` (backward compatible).
