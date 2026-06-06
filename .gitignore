@@ -12,5 +12,5 @@ __pycache__/
 # tooling output
 test-results/
 playwright-report/
-.ui-verify/
+.ui-verify/screenshots/
 .DS_Store
