@@ -74,6 +74,10 @@ Before any UI work, ensure `agent-browser` is installed (`npm i -g agent-browser
 
 All visual/layout changes to the system diagram must use 3D geometry (PlaneGeometry, mesh positioning, material properties) — not CSS modifications. The diagram is fully parameterized in Threlte world-space; CSS-level visual fixes are prohibited to keep future changes in the 3D layer.
 
+## threlte-mcp (runtime 3D inspection)
+
+`threlte-mcp` is configured in `.claude/mcp.json` and the `<MCPBridgeComponent />` is mounted inside the Threlte Canvas in `CycleDiagram3D.svelte`. With the dev server running, MCP tools can query and manipulate the live Three.js scene graph (list objects, read/write transforms, materials, visibility, etc.).
+
 ## Test configuration
 
 - **Vitest**: `requireAssertions: true` — every test must contain at least one assertion. Node environment. Tests match `src/**/*.{test,spec}.{js,ts}`.

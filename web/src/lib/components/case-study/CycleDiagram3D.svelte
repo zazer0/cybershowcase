@@ -2,6 +2,7 @@
 	import { Canvas } from '@threlte/core';
 	import { WebGLRenderer } from 'three';
 	import DiagramScene from './DiagramScene.svelte';
+	import { MCPBridgeComponent } from 'threlte-mcp/client';
 
 	let {
 		activeNodeId,
@@ -28,6 +29,7 @@
 <div class="canvas-wrapper">
 	<Canvas {createRenderer}>
 		<DiagramScene {activeNodeId} {activeArcId} />
+		<MCPBridgeComponent />
 	</Canvas>
 </div>
 
