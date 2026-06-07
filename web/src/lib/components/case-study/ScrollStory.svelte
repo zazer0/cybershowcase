@@ -202,7 +202,7 @@
 	/* Step label */
 	.step-label {
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 9px;
+		font-size: 10px;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.12em;
@@ -238,7 +238,7 @@
 	/* Footer label */
 	.footer-label {
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 8px;
+		font-size: 9px;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.14em;
@@ -248,16 +248,16 @@
 	}
 
 	/* Desktop: 2fr/3fr grid — diagram left, single step card right */
-	@media (min-width: 1024px) {
+	@media (min-width: 768px) {
 		.grid-layout {
 			display: grid;
-			grid-template-columns: 2fr 3fr;
+			grid-template-columns: 5fr 8fr;
 			gap: 0;
 			transition: grid-template-columns 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
 		}
 
 		.grid-layout--expanded {
-			grid-template-columns: 3fr 2fr;
+			grid-template-columns: 8fr 5fr;
 		}
 
 		.left-column {
@@ -293,7 +293,7 @@
 			height: 100vh;
 			display: flex;
 			align-items: center;
-			padding: 0 2rem;
+			padding: 0 3rem;
 			pointer-events: none;
 		}
 
@@ -320,5 +320,8 @@
 		flex: 1;
 		min-height: 0;
 		width: 100%;
+		border: 1px solid color-mix(in srgb, var(--color-muted) 30%, transparent);
+		border-radius: 12px;
+		background: color-mix(in srgb, var(--color-ink) 2%, transparent);
 	}
 </style>
