@@ -256,12 +256,9 @@
 			transition: grid-template-columns 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
 		}
 
-		.grid-layout--expanded {
-			grid-template-columns: 3fr 2fr;
-		}
-
 		.left-column {
 			display: block;
+			overflow: clip;
 		}
 
 		.mobile-cards {
