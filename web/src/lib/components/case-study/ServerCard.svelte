@@ -84,60 +84,57 @@
 
 <!-- HTML card overlay — fixed orientation, centered on this group's origin -->
 <HTML pointerEvents="none" center distanceFactor={8}>
-	{#if isExpanded}
-		<div class="server-card server-card--expanded">
-			<div class="top-row">
-				<span class="vm-label">DEV VM</span>
-				<span class="os-label">ubuntu@cyberclaw-dev</span>
-			</div>
+	<div class="server-card" class:server-card--expanded={isExpanded}>
+		<div class="top-row">
+			<span class="vm-label">DEV VM</span>
+			<span class="os-label">{isExpanded ? 'ubuntu@cyberclaw-dev' : 'ubuntu'}</span>
+		</div>
 
-			<div class="item item--cli item--active">
-				CLI Agent
-			</div>
+		<div class="item item--cli" class:item--active={isExpanded || activeNodeId === 'server'}>
+			CLI Agent
+		</div>
 
-			<div class="arrow-down">▾</div>
+		<div class="expanded-content" class:expanded-content--visible={isExpanded}>
+			<div class="expanded-inner">
+				<div class="arrow-down">▾</div>
 
-			<div class="loop-container">
-				<div class="loop-header">automate_loop.sh</div>
-				<div class="substeps-row">
-					<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep0Glow)} style:background={`rgba(201, 162, 39, ${substep0Glow * 0.08})`}>
-						<div class="substep-title">1. DIAGNOSE</div>
-						<div class="substep-desc">investigate error<br/>find root cause</div>
-					</div>
-					<div class="substep-arrow">▸</div>
-					<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep1Glow)} style:background={`rgba(201, 162, 39, ${substep1Glow * 0.08})`}>
-						<div class="substep-title">2. PLAN</div>
-						<div class="substep-desc">write fix steps<br/>to plan file</div>
-					</div>
-					<div class="substep-arrow">▸</div>
-					<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep2Glow)} style:background={`rgba(201, 162, 39, ${substep2Glow * 0.08})`}>
-						<div class="substep-title">3. IMPLEMENT</div>
-						<div class="substep-desc">execute plan<br/>patch code</div>
+				<div class="loop-container">
+					<div class="loop-header">automate_loop.sh</div>
+					<div class="substeps-row">
+						<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep0Glow)} style:background={`rgba(201, 162, 39, ${substep0Glow * 0.08})`}>
+							<div class="substep-title">1. DIAGNOSE</div>
+							<div class="substep-desc">investigate error<br/>find root cause</div>
+						</div>
+						<div class="substep-arrow">▸</div>
+						<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep1Glow)} style:background={`rgba(201, 162, 39, ${substep1Glow * 0.08})`}>
+							<div class="substep-title">2. PLAN</div>
+							<div class="substep-desc">write fix steps<br/>to plan file</div>
+						</div>
+						<div class="substep-arrow">▸</div>
+						<div class="substep" style:border-color={lerpColor('#cfcbc0', '#c9a227', substep2Glow)} style:background={`rgba(201, 162, 39, ${substep2Glow * 0.08})`}>
+							<div class="substep-title">3. IMPLEMENT</div>
+							<div class="substep-desc">execute plan<br/>patch code</div>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="item item--dashed item--dashed-active">
-				solution.sh · validate progress
+				<div class="item item--dashed item--dashed-active">
+					solution.sh · validate progress
+				</div>
 			</div>
 		</div>
-	{:else}
-		<div class="server-card">
-			<div class="top-row">
-				<span class="vm-label">DEV VM</span>
-				<span class="os-label">ubuntu</span>
-			</div>
-			<div class="item item--cli" class:item--active={activeNodeId === 'server'}>
-				CLI Agent
-			</div>
-			<div class="item item--dashed" class:item--dashed-active={activeNodeId === 'server'}>
-				automate_loop.sh
-			</div>
-			<div class="item item--dashed" class:item--dashed-active={activeNodeId === 'server'}>
-				solution.sh
+
+		<div class="collapsed-content" class:collapsed-content--hidden={isExpanded}>
+			<div class="collapsed-inner">
+				<div class="item item--dashed" class:item--dashed-active={activeNodeId === 'server'}>
+					automate_loop.sh
+				</div>
+				<div class="item item--dashed" class:item--dashed-active={activeNodeId === 'server'}>
+					solution.sh
+				</div>
 			</div>
 		</div>
-	{/if}
+	</div>
 
 	<div class="card-label">SERVER</div>
 </HTML>
@@ -155,6 +152,9 @@
 		gap: 8px;
 		user-select: none;
 		pointer-events: none;
+		transition: width 700ms cubic-bezier(0.25, 0.1, 0.25, 1),
+			padding 700ms cubic-bezier(0.25, 0.1, 0.25, 1),
+			gap 700ms cubic-bezier(0.25, 0.1, 0.25, 1);
 	}
 
 	.top-row {
@@ -222,6 +222,53 @@
 		width: 340px;
 		padding: 16px 18px;
 		gap: 10px;
+	}
+
+	.expanded-content {
+		display: grid;
+		grid-template-rows: 0fr;
+		opacity: 0;
+		transform: scale(0.96) translateY(-4px);
+		transition: grid-template-rows 700ms cubic-bezier(0.25, 0.1, 0.25, 1),
+			opacity 600ms ease 100ms,
+			transform 600ms ease 100ms;
+		overflow: hidden;
+	}
+
+	.expanded-content--visible {
+		grid-template-rows: 1fr;
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+
+	.expanded-inner {
+		min-height: 0;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.collapsed-content {
+		display: grid;
+		grid-template-rows: 1fr;
+		opacity: 1;
+		transition: grid-template-rows 600ms cubic-bezier(0.25, 0.1, 0.25, 1),
+			opacity 400ms ease;
+		overflow: hidden;
+	}
+
+	.collapsed-content--hidden {
+		grid-template-rows: 0fr;
+		opacity: 0;
+	}
+
+	.collapsed-inner {
+		min-height: 0;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 	}
 
 	.arrow-down {
