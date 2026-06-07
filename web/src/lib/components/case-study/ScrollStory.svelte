@@ -247,11 +247,11 @@
 		text-align: center;
 	}
 
-	/* Tablet: diagram-heavy text split for iPads */
-	@media (min-width: 768px) {
+	/* Tablet: two-column layout for iPads (landscape + larger portraits) */
+	@media (min-width: 900px) {
 		.grid-layout {
 			display: grid;
-			grid-template-columns: 1fr 2fr;
+			grid-template-columns: 2fr 3fr;
 			gap: 0;
 			transition: grid-template-columns 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
 		}
