@@ -247,17 +247,17 @@
 		text-align: center;
 	}
 
-	/* Desktop: 2fr/3fr grid — diagram left, single step card right */
+	/* Tablet: diagram-heavy text split for iPads */
 	@media (min-width: 768px) {
 		.grid-layout {
 			display: grid;
-			grid-template-columns: 5fr 8fr;
+			grid-template-columns: 1fr 2fr;
 			gap: 0;
 			transition: grid-template-columns 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
 		}
 
 		.grid-layout--expanded {
-			grid-template-columns: 8fr 5fr;
+			grid-template-columns: 3fr 2fr;
 		}
 
 		.left-column {
@@ -293,7 +293,7 @@
 			height: 100vh;
 			display: flex;
 			align-items: center;
-			padding: 0 3rem;
+			padding: 0 1.5rem;
 			pointer-events: none;
 		}
 
@@ -312,6 +312,21 @@
 				opacity: 1;
 				transform: translateY(0);
 			}
+		}
+	}
+
+	/* Desktop: wider proportions with more text padding */
+	@media (min-width: 1024px) {
+		.grid-layout {
+			grid-template-columns: 5fr 8fr;
+		}
+
+		.grid-layout--expanded {
+			grid-template-columns: 8fr 5fr;
+		}
+
+		.sticky-card-container {
+			padding: 0 3rem;
 		}
 	}
 
