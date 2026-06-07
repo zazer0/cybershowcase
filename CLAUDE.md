@@ -66,10 +66,6 @@ npm workspaces monorepo — root orchestrates `web/` (SvelteKit) and `api/` (Fas
 - SvelteKit 2.57, Vite 8, TypeScript 6
 - **Threlte v8**: check current v8 docs before editing Canvas, T, GLTF, events, snippets, plugins, or Rapier. After 3D changes, run the app and visually inspect the scene.
 
-## Browser verification
-
-Before any UI work, ensure `agent-browser` is installed (`npm i -g agent-browser && agent-browser install`) — use it to take screenshots between each file change for incremental visual verification.
-
 ## 3D Diagram constraints
 
 All visual/layout changes to the system diagram must use 3D geometry (PlaneGeometry, mesh positioning, material properties) — not CSS modifications. The diagram is fully parameterized in Threlte world-space; CSS-level visual fixes are prohibited to keep future changes in the 3D layer.
@@ -147,10 +143,9 @@ The verification hook uses a file-based registry to control which section of the
 
 ### Agent-browser manual validation
 
-When using `agent-browser` for intermediate visual checks, `agent-browser scroll <selector>` may not reliably reach scroll-sentinel targets. Use `eval` with `scrollIntoView` instead:
+Sentinel mapping for scroll targets: nth-child(1)=Step 0, nth-child(2)=Step 1, nth-child(3)=Step 2, nth-child(4)=Step 3, nth-child(5)=Output.
 
+Example `scrollIntoView` for Step 2:
 ```sh
 agent-browser eval "document.querySelector('.scroll-story .scroll-sentinel:nth-child(3)').scrollIntoView({block: 'start'}); 'done'"
 ```
-
-Sentinel mapping: nth-child(1)=Step 0, nth-child(2)=Step 1, nth-child(3)=Step 2, nth-child(4)=Step 3, nth-child(5)=Output. Wait ~1.5-2s after scrolling for camera/spring animations to settle before screenshotting.
