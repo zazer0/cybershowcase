@@ -86,7 +86,7 @@
 </script>
 
 <section class="scroll-story">
-	<div class="grid-layout" class:grid-layout--expanded={activeStepIndex === 2}>
+	<div class="grid-layout">
 		<!-- Left column: sticky diagram -->
 		<div class="left-column">
 			<div class="sticky-container">
@@ -251,13 +251,8 @@
 	@media (min-width: 1024px) {
 		.grid-layout {
 			display: grid;
-			grid-template-columns: 5fr 8fr;
+			grid-template-columns: 1fr 1fr;
 			gap: 0;
-			transition: grid-template-columns 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
-		}
-
-		.grid-layout--expanded {
-			grid-template-columns: 8fr 5fr;
 		}
 
 		.left-column {
