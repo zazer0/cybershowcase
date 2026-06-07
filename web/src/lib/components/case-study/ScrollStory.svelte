@@ -247,18 +247,21 @@
 		text-align: center;
 	}
 
-	/* Tablet: two-column layout for iPads (landscape + larger portraits) */
-	@media (min-width: 900px) {
+	/* Desktop: two-column layout (1024px+ covers iPad landscape) */
+	@media (min-width: 1024px) {
 		.grid-layout {
 			display: grid;
-			grid-template-columns: 2fr 3fr;
+			grid-template-columns: 5fr 8fr;
 			gap: 0;
 			transition: grid-template-columns 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
 		}
 
+		.grid-layout--expanded {
+			grid-template-columns: 8fr 5fr;
+		}
+
 		.left-column {
 			display: block;
-			overflow: clip;
 		}
 
 		.mobile-cards {
@@ -290,7 +293,7 @@
 			height: 100vh;
 			display: flex;
 			align-items: center;
-			padding: 0 1.5rem;
+			padding: 0 3rem;
 			pointer-events: none;
 		}
 
@@ -312,28 +315,10 @@
 		}
 	}
 
-	/* Desktop: wider proportions with more text padding */
-	@media (min-width: 1024px) {
-		.grid-layout {
-			grid-template-columns: 5fr 8fr;
-		}
-
-		.grid-layout--expanded {
-			grid-template-columns: 8fr 5fr;
-		}
-
-		.sticky-card-container {
-			padding: 0 3rem;
-		}
-	}
-
 	/* 3D diagram fills remaining flex space in the sticky container */
 	.diagram-3d-wrapper {
 		flex: 1;
 		min-height: 0;
 		width: 100%;
-		border: 1px solid color-mix(in srgb, var(--color-muted) 30%, transparent);
-		border-radius: 12px;
-		background: color-mix(in srgb, var(--color-ink) 2%, transparent);
 	}
 </style>
