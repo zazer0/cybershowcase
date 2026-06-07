@@ -82,7 +82,7 @@
 
 	.step-tag {
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 9px;
+		font-size: 10px;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
@@ -98,7 +98,7 @@
 
 	.name-tag {
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 9px;
+		font-size: 10px;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
@@ -122,7 +122,7 @@
 
 	/* Heading */
 	h3 {
-		font-size: 1.25rem;
+		font-size: 1.4rem;
 		font-weight: 700;
 		line-height: 1.2;
 		margin: 0 0 18px 0;
@@ -162,7 +162,7 @@
 	}
 
 	.description-text {
-		font-size: 0.875rem;
+		font-size: 1rem;
 		line-height: 1.625;
 		opacity: 0.75;
 		margin: 0;
@@ -175,7 +175,7 @@
 	/* Transcript box */
 	.transcript-box {
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 11px;
+		font-size: 12.5px;
 		line-height: 1.75;
 		background: rgba(26, 26, 26, 0.04);
 		border-left: 2.5px solid #c9a227;
@@ -214,7 +214,7 @@
 
 	.stat-label {
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 8px;
+		font-size: 9px;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
 		color: rgba(255, 255, 255, 0.35);
