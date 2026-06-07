@@ -86,7 +86,7 @@
 </script>
 
 <section class="scroll-story">
-	<div class="grid-layout">
+	<div class="grid-layout" class:grid-layout--expanded={activeStepIndex === 2}>
 		<!-- Left column: sticky diagram -->
 		<div class="left-column">
 			<div class="sticky-container">
@@ -99,7 +99,7 @@
 				</div>
 
 				<div class="diagram-3d-wrapper">
-					<CycleDiagram3D {activeNodeId} {activeArcId} />
+					<CycleDiagram3D {activeNodeId} {activeArcId} {activeStepIndex} />
 				</div>
 
 				<span class="footer-label">System Architecture</span>
@@ -253,6 +253,11 @@
 			display: grid;
 			grid-template-columns: 2fr 3fr;
 			gap: 0;
+			transition: grid-template-columns 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
+		}
+
+		.grid-layout--expanded {
+			grid-template-columns: 3fr 2fr;
 		}
 
 		.left-column {

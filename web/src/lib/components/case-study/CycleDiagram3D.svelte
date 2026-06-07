@@ -5,10 +5,12 @@
 
 	let {
 		activeNodeId,
-		activeArcId
+		activeArcId,
+		activeStepIndex
 	}: {
 		activeNodeId: string;
 		activeArcId: string | null;
+		activeStepIndex: number;
 	} = $props();
 
 	/**
@@ -27,7 +29,7 @@
 -->
 <div class="canvas-wrapper">
 	<Canvas {createRenderer}>
-		<DiagramScene {activeNodeId} {activeArcId} />
+		<DiagramScene {activeNodeId} {activeArcId} {activeStepIndex} />
 	</Canvas>
 </div>
 

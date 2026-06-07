@@ -4,7 +4,13 @@ import {
 	getParticleCount,
 	getSSHParticlePosition,
 	SSH_ARROW_START,
-	SSH_ARROW_END
+	SSH_ARROW_END,
+	getCameraConfig,
+	DEFAULT_CAMERA,
+	STEP2_CAMERA,
+	getSubstepGlow,
+	SUBSTEP_CYCLE_DURATION,
+	SUBSTEP_COUNT
 } from '../animationData.js';
 
 describe('getAnimationType', () => {
@@ -79,5 +85,61 @@ describe('getSSHParticlePosition', () => {
 			expect(Number.isFinite(pos[1])).toBe(true);
 			expect(Number.isFinite(pos[2])).toBe(true);
 		}
+	});
+});
+
+describe('getCameraConfig', () => {
+	it('returns DEFAULT_CAMERA for steps 0, 1, 3, 4', () => {
+		for (const step of [0, 1, 3, 4]) {
+			expect(getCameraConfig(step)).toBe(DEFAULT_CAMERA);
+		}
+	});
+
+	it('returns STEP2_CAMERA for step 2', () => {
+		expect(getCameraConfig(2)).toBe(STEP2_CAMERA);
+	});
+
+	it('camera configs have 3-element position arrays', () => {
+		expect(DEFAULT_CAMERA.position).toHaveLength(3);
+		expect(STEP2_CAMERA.position).toHaveLength(3);
+	});
+
+	it('camera configs have 3-element lookAt arrays', () => {
+		expect(DEFAULT_CAMERA.lookAt).toHaveLength(3);
+		expect(STEP2_CAMERA.lookAt).toHaveLength(3);
+	});
+});
+
+describe('getSubstepGlow', () => {
+	it('returns 0 for non-active substep', () => {
+		// At time=0, substep 0 is active, so substep 1 should return 0
+		const glow = getSubstepGlow(1, 0);
+		expect(glow).toBe(0);
+	});
+
+	it('returns > 0 for active substep at midpoint', () => {
+		// Substep 0 is active at time = SUBSTEP_CYCLE_DURATION / (2 * SUBSTEP_COUNT)
+		// which is the midpoint of substep 0's window
+		const midpoint = SUBSTEP_CYCLE_DURATION / (2 * SUBSTEP_COUNT);
+		const glow = getSubstepGlow(0, midpoint);
+		expect(glow).toBeGreaterThan(0);
+	});
+
+	it('returns value between 0 and 1 inclusive', () => {
+		// Sample across a full cycle
+		for (let i = 0; i < SUBSTEP_COUNT; i++) {
+			for (let t = 0; t < SUBSTEP_CYCLE_DURATION; t += 0.1) {
+				const glow = getSubstepGlow(i, t);
+				expect(glow).toBeGreaterThanOrEqual(0);
+				expect(glow).toBeLessThanOrEqual(1);
+			}
+		}
+	});
+
+	it('peak glow is 1 at substep midpoint', () => {
+		// At the exact midpoint of substep 0's window, sin(0.5 * PI) = 1
+		const midpoint = SUBSTEP_CYCLE_DURATION / (2 * SUBSTEP_COUNT);
+		const glow = getSubstepGlow(0, midpoint);
+		expect(glow).toBeCloseTo(1, 5);
 	});
 });
