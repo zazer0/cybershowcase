@@ -1,19 +1,106 @@
 #!/usr/bin/env node
 
 import { readFileSync, mkdirSync, writeFileSync, readdirSync, existsSync } from "node:fs";
-import { execFileSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { join, extname } from "node:path";
-import { chromium } from "playwright";
+import { tmpdir } from "node:os";
 
-const WORK_DIR = "/tmp/ccweb-verify";
 const CONTRACT_MARKER = "UI_VERIFICATION_CONTRACT";
 
-// ── Read stdin ─────────────────────────────────────────────
+const VERDICT_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  type: "object",
+  required: ["pass", "failures", "summary"],
+  properties: {
+    pass: { type: "boolean", description: "true if ALL acceptance criteria are met in the screenshots" },
+    summary: { type: "string", description: "One-sentence overall assessment" },
+    failures: {
+      type: "array",
+      items: {
+        type: "object",
+        required: ["criterion", "explanation", "viewport"],
+        properties: {
+          criterion: { type: "string", description: "The acceptance criterion that failed, verbatim from the contract" },
+          explanation: { type: "string", description: "What is wrong in the screenshot and what the correct state should be" },
+          viewport: { type: "string", description: "Which viewport the failure was observed in, if viewport-specific" },
+        },
+        additionalProperties: false,
+      },
+      description: "Empty array when pass is true",
+    },
+  },
+  additionalProperties: false,
+};
+
+const CONFIG_DEFAULTS = {
+  devServerUrl: "http://localhost:5173",
+  screenshotWaitMs: 500,
+  defaultViewports: ["1440x900", "390x844"],
+  judge: {
+    model: null,
+    extraInstructions: null,
+    timeoutMs: 180_000,
+  },
+  navigationWaitUntil: "networkidle",
+  playwrightLaunchOptions: {},
+  workDir: `${tmpdir()}/ui-verify`,
+};
+
+// ── Config ────────────────────────────────────────────────
+function loadConfig(repoRoot) {
+  const configPath = join(repoRoot, ".ui-verify", "config.json");
+  let userConfig = {};
+  if (existsSync(configPath)) {
+    try {
+      userConfig = JSON.parse(readFileSync(configPath, "utf8"));
+    } catch (e) {
+      console.error(`ui-verify: failed to parse config.json: ${e.message}`);
+    }
+  }
+  const config = { ...CONFIG_DEFAULTS, ...userConfig };
+  config.judge = { ...CONFIG_DEFAULTS.judge, ...(userConfig.judge || {}) };
+
+  if (typeof config.workDir === "string" && config.workDir.includes("${TMPDIR}")) {
+    config.workDir = config.workDir.replace("${TMPDIR}", tmpdir());
+  }
+  return config;
+}
+
+// ── Read stdin ────────────────────────────────────────────
 function readHookInput() {
   return JSON.parse(readFileSync("/dev/stdin", "utf8"));
 }
 
-// ── Scroll-targets registry ───────────────────────────────
+// ── Dependency checks ─────────────────────────────────────
+async function checkDependencies(config) {
+  try {
+    await import("playwright");
+  } catch {
+    console.error("ui-verify: playwright not installed, skipping verification");
+    return false;
+  }
+
+  try {
+    execSync("which codex", { stdio: "ignore" });
+  } catch {
+    console.error("ui-verify: codex CLI not found on PATH, skipping verification");
+    return false;
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    await fetch(config.devServerUrl, { signal: controller.signal });
+    clearTimeout(timeout);
+  } catch {
+    console.error(`ui-verify: dev server not reachable at ${config.devServerUrl}, skipping verification`);
+    return false;
+  }
+
+  return true;
+}
+
+// ── Scroll-targets registry ──────────────────────────────
 function loadScrollTarget(repoRoot) {
   const activeFile = join(repoRoot, ".ui-verify", "active-target");
   const registryFile = join(repoRoot, ".ui-verify", "scroll-targets.json");
@@ -29,9 +116,8 @@ function loadScrollTarget(repoRoot) {
   return registry[key];
 }
 
-// ── Parse UI_VERIFICATION_CONTRACT from last_assistant_message ──
-// Returns { task, routes, viewports, acceptance } or null.
-function parseContract(text) {
+// ── Parse contract ────────────────────────────────────────
+function parseContract(text, config) {
   const idx = text.indexOf(CONTRACT_MARKER);
   if (idx === -1) return null;
 
@@ -54,35 +140,34 @@ function parseContract(text) {
       const val = line.slice(2).trim();
       if (key === "routes") {
         const parts = val.split(">>");
-        contract.routes.push({
-          url: parts[0].trim(),
-          scrollTo: parts[1]?.trim() || null,
-        });
+        let url = parts[0].trim();
+        if (url.startsWith("/")) {
+          const base = config.devServerUrl.replace(/\/+$/, "");
+          url = base + url;
+        }
+        contract.routes.push({ url, scrollTo: parts[1]?.trim() || null });
       } else {
         contract[key].push(val);
       }
     } else {
-      break; // end of contract block
+      break;
     }
   }
 
   if (!contract.routes.length || !contract.acceptance.length) return null;
-  if (!contract.viewports.length) contract.viewports = ["1440x900", "390x844"];
+  if (!contract.viewports.length) contract.viewports = [...config.defaultViewports];
   return contract;
 }
 
-// ── Screenshot with Playwright ─────────────────────────────
-// Returns array of { path, route, viewport }.
-async function captureScreenshots(contract, registryTarget) {
-  mkdirSync(WORK_DIR, { recursive: true });
-  const browser = await chromium.launch({ headless: true });
+// ── Screenshot with Playwright ────────────────────────────
+async function captureScreenshots(contract, registryTarget, config) {
+  mkdirSync(config.workDir, { recursive: true });
+  const { chromium } = await import("playwright");
+  const browser = await chromium.launch({ headless: true, ...config.playwrightLaunchOptions });
   const shots = [];
 
   for (const route of contract.routes) {
-    // Registry target takes priority, then contract's >> selector, then no scroll
-    const scrollTo = registryTarget !== null
-      ? registryTarget.scrollTo
-      : route.scrollTo;
+    const scrollTo = registryTarget !== null ? registryTarget.scrollTo : route.scrollTo;
 
     for (const vp of contract.viewports) {
       const [w, h] = vp.split("x").map(Number);
@@ -91,20 +176,20 @@ async function captureScreenshots(contract, registryTarget) {
         ? "_scroll-" + String(scrollTo).replace(/[^a-z0-9]/gi, "-").replace(/-+/g, "-")
         : "";
       const filename = `${urlSlug}${scrollSlug}_${vp}.png`;
-      const filepath = join(WORK_DIR, filename);
+      const filepath = join(config.workDir, filename);
 
       const ctx = await browser.newContext({ viewport: { width: w, height: h } });
       const page = await ctx.newPage();
-      await page.goto(route.url, { waitUntil: "networkidle", timeout: 30_000 });
+      await page.goto(route.url, { waitUntil: config.navigationWaitUntil, timeout: 30_000 });
 
       if (scrollTo === "__BOTTOM__") {
         await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(config.screenshotWaitMs);
       } else if (scrollTo) {
         await page.waitForSelector(scrollTo, { timeout: 10_000 });
         const el = await page.$(scrollTo);
         await el.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(config.screenshotWaitMs);
       }
 
       await page.screenshot({ path: filepath, fullPage: false });
@@ -118,7 +203,7 @@ async function captureScreenshots(contract, registryTarget) {
   return shots;
 }
 
-// ── Persist screenshots locally ────────────────────────────
+// ── Persist screenshots ───────────────────────────────────
 function persistScreenshots(shots, repoRoot) {
   const dir = join(repoRoot, ".ui-verify", "screenshots");
   mkdirSync(dir, { recursive: true });
@@ -155,8 +240,8 @@ function buildSlug(url, scrollTo) {
   return slug.replace(/[^a-z0-9]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").toLowerCase();
 }
 
-// ── Build Codex prompt ─────────────────────────────────────
-function buildPrompt(contract, shots, hasReference) {
+// ── Build Codex prompt ────────────────────────────────────
+function buildPrompt(contract, shots, hasReference, config) {
   const vpList = shots.map(s => {
     const scrollNote = s.scrollTo ? `(scrolled to ${s.scrollTo})` : "(top of page)";
     return `  - ${s.viewport} @ ${s.route} ${scrollNote}`;
@@ -175,7 +260,7 @@ function buildPrompt(contract, shots, hasReference) {
   }
   lines.push("Judge ONLY the provided screenshots against the acceptance criteria below.");
 
-  return [
+  const parts = [
     ...lines,
     "",
     `TASK IMPLEMENTED: ${contract.task}`,
@@ -188,17 +273,24 @@ function buildPrompt(contract, shots, hasReference) {
     "",
     "Fail for: missing UI elements, clipping, overlap, wrong responsive behavior,",
     "unreadable text, broken visual hierarchy, or evidence the screenshot is stale/blank.",
-    "",
-    "Return your structured verdict per the output schema.",
-  ].join("\n");
+  ];
+
+  if (config.judge.extraInstructions) {
+    parts.push("", "ADDITIONAL PROJECT CONTEXT:", config.judge.extraInstructions);
+  }
+
+  parts.push("", "Return your structured verdict per the output schema.");
+  return parts.join("\n");
 }
 
-// ── Invoke Codex CLI ───────────────────────────────────────
-function invokeCodex(prompt, imagePaths, repoRoot) {
-  const verdictPath = join(WORK_DIR, "verdict.json");
-  const schemaPath = join(repoRoot, ".claude/ui-verifier/verdict.schema.json");
+// ── Invoke Codex CLI ──────────────────────────────────────
+function invokeCodex(prompt, imagePaths, config, repoRoot) {
+  const schemaPath = join(config.workDir, "verdict.schema.json");
+  const verdictPath = join(config.workDir, "verdict.json");
 
-  execFileSync("codex", [
+  writeFileSync(schemaPath, JSON.stringify(VERDICT_SCHEMA, null, 2));
+
+  const args = [
     "exec",
     "--ephemeral",
     "--sandbox", "read-only",
@@ -206,25 +298,39 @@ function invokeCodex(prompt, imagePaths, repoRoot) {
     "--image", imagePaths.join(","),
     "--output-schema", schemaPath,
     "-o", verdictPath,
-    prompt,
-  ], { timeout: 180_000, stdio: ["ignore", "pipe", "pipe"] });
+  ];
+  if (config.judge.model) {
+    args.push("-m", config.judge.model);
+  }
+  args.push(prompt);
+
+  execFileSync("codex", args, {
+    timeout: config.judge.timeoutMs,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
 
   return JSON.parse(readFileSync(verdictPath, "utf8"));
 }
 
-// ── Main ───────────────────────────────────────────────────
+// ── Main ──────────────────────────────────────────────────
 async function main() {
   const hookInput = readHookInput();
   const lastMessage = hookInput.last_assistant_message || "";
   const repoRoot = hookInput.cwd || process.cwd();
 
-  const contract = parseContract(lastMessage);
+  const config = loadConfig(repoRoot);
+  const contract = parseContract(lastMessage, config);
   if (!contract) {
-    process.exit(0); // No contract → not a UI task → allow through
+    process.exit(0);
+  }
+
+  const depsOk = await checkDependencies(config);
+  if (!depsOk) {
+    process.exit(0);
   }
 
   const registryTarget = loadScrollTarget(repoRoot);
-  const shots = await captureScreenshots(contract, registryTarget);
+  const shots = await captureScreenshots(contract, registryTarget, config);
   persistScreenshots(shots, repoRoot);
 
   const refDir = join(repoRoot, ".ui-verify", "reference");
@@ -238,16 +344,15 @@ async function main() {
   }
 
   const allImages = [...refImages, ...shots.map(s => s.path)];
-  const prompt = buildPrompt(contract, shots, refImages.length > 0);
-  const verdict = invokeCodex(prompt, allImages, repoRoot);
+  const prompt = buildPrompt(contract, shots, refImages.length > 0, config);
+  const verdict = invokeCodex(prompt, allImages, config, repoRoot);
 
-  writeFileSync(join(WORK_DIR, "verdict.json"), JSON.stringify(verdict, null, 2));
+  writeFileSync(join(config.workDir, "verdict.json"), JSON.stringify(verdict, null, 2));
 
   if (verdict.pass) {
     process.exit(0);
   }
 
-  // Block the subagent
   const failureLines = (verdict.failures || [])
     .map((f, i) => `  ${i + 1}. FAIL [${f.viewport}] "${f.criterion}"\n     → ${f.explanation}`)
     .join("\n");
@@ -262,7 +367,7 @@ async function main() {
       "Failures:",
       failureLines,
       "",
-      `Screenshots saved to: ${WORK_DIR}`,
+      `Screenshots saved to: ${config.workDir}`,
       "",
       "ACTION REQUIRED: Fix every failure listed above, then include a",
       "UI_VERIFICATION_CONTRACT block in your response to trigger re-verification.",

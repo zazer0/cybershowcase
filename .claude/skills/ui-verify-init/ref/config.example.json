@@ -1,0 +1,13 @@
+{
+  "devServerUrl": "http://localhost:5173",
+  "screenshotWaitMs": 500,
+  "defaultViewports": ["1440x900", "390x844"],
+  "judge": {
+    "model": null,
+    "extraInstructions": null,
+    "timeoutMs": 180000
+  },
+  "navigationWaitUntil": "networkidle",
+  "playwrightLaunchOptions": {},
+  "workDir": "${TMPDIR}/ui-verify"
+}
