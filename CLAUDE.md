@@ -78,7 +78,7 @@ All visual/layout changes to the system diagram must use 3D geometry (PlaneGeome
 
 ## UI Verification
 
-This project uses the `ui-verify` skill for automated visual verification. See `.claude/skills/ui-verify/` for the contract format, verdict authority rules, and scroll-targets documentation.
+This project uses the `progress-uiverify-step` global skill for automated visual verification. Invoke it when working on a specific page section to match its reference image.
 
 ### Project scroll targets
 
