@@ -38,6 +38,16 @@ echo "pricing" > .ui-verify/active-target
 
 The hook reads this file on every verification run. Update it when you move to a different section.
 
+## Reference Images
+
+Place reference images in `.ui-verify/reference/`. Naming convention: `{target-key}_{description}.{ext}`
+
+- `step-two_sysdiagram.png` — only sent when active target is `step-two`
+- `first-load_hero.png` — only sent when active target is `first-load`
+- `global-layout.png` (no `_`) — always sent regardless of active target
+
+The `active-target` file **must** exist when the hook fires. Missing active-target is a blocking error.
+
 ## See Also
 
 - [CONTRACT_FORMAT.md](CONTRACT_FORMAT.md) — the `>> .selector` fallback syntax

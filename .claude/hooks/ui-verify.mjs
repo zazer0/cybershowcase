@@ -333,12 +333,26 @@ async function main() {
   const shots = await captureScreenshots(contract, registryTarget, config);
   persistScreenshots(shots, repoRoot);
 
+  const activeTargetPath = join(repoRoot, ".ui-verify", "active-target");
+  if (!existsSync(activeTargetPath)) {
+    const msg = JSON.stringify({ decision: "block", reason: "ERROR: no active target set. Write a scroll-target key to .ui-verify/active-target before emitting a verification contract." });
+    process.stdout.write(msg + "\n");
+    process.exit(1);
+  }
+  const activeTargetKey = readFileSync(activeTargetPath, "utf8").trim();
+
   const refDir = join(repoRoot, ".ui-verify", "reference");
   const IMAGE_EXTS = new Set([".png", ".jpg", ".jpeg", ".webp"]);
   let refImages = [];
   if (existsSync(refDir)) {
     refImages = readdirSync(refDir)
       .filter(f => IMAGE_EXTS.has(extname(f).toLowerCase()))
+      .filter(f => {
+        const underscoreIdx = f.indexOf("_");
+        if (underscoreIdx === -1) return true;
+        const prefix = f.slice(0, underscoreIdx);
+        return prefix === activeTargetKey;
+      })
       .sort()
       .map(f => join(refDir, f));
   }
