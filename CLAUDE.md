@@ -76,52 +76,11 @@ All visual/layout changes to the system diagram must use 3D geometry (PlaneGeome
 - **Playwright**: matches `**/*.e2e.{ts,js}`. Builds the app then runs preview server on `:4173`.
 - **ESLint**: unused vars use `_` prefix pattern (`varsIgnorePattern: '^_'`, `argsIgnorePattern: '^_'`).
 
-## UI Verification Contract
+## UI Verification
 
-When completing any UI task, you MUST end your final message with a UI_VERIFICATION_CONTRACT block.
-This triggers an automated Stop hook that screenshots the running app with Playwright and sends the images to an independent visual QA judge (Codex CLI — a separate model with no shared context). The judge evaluates screenshots against the acceptance criteria and returns a structured pass/fail verdict.
+This project uses the `progress-uiverify-step` global skill for automated visual verification. Invoke it when working on a specific page section to match its reference image.
 
-**Verification verdicts are AUTHORITATIVE.** If the hook blocks you:
-- The failures are confirmed visual bugs observed in real screenshots — not suggestions or opinions.
-- You MUST fix every listed failure. Do NOT argue, dismiss, or question the verdict.
-- Do NOT claim the UI "looks correct" or that the judge made an error.
-- Your fix response MUST include a new `UI_VERIFICATION_CONTRACT` block to trigger re-verification.
-- You are blocked from completing the task until verification passes.
-- If unsure how to fix, attempt your best fix and let the judge re-evaluate.
-
-This is equivalent to a CI gate. You cannot ship until it passes.
-
-Format:
-```
-UI_VERIFICATION_CONTRACT
-task: <one-line description of what was implemented>
-routes:
-  - <full URL, e.g. http://localhost:5173/pricing>
-  - http://localhost:5173/ >> .scroll-story
-viewports:
-  - <WIDTHxHEIGHT, e.g. 1440x900>
-  - <WIDTHxHEIGHT, e.g. 390x844>
-acceptance:
-  - <visually verifiable criterion>
-  - <another criterion>
-```
-
-Rules:
-- `task` — required, single line
-- `routes` — required, at least one. Must be reachable (dev server running). You can still append `>> .css-selector` as a fallback, but scroll position is now driven by the scroll-targets registry (see below).
-- `viewports` — optional. Defaults to 1440x900 and 390x844
-- `acceptance` — required, at least two items. Must be visually verifiable from a screenshot
-
-## Scroll-Targets Registry
-
-The verification hook uses a file-based registry to control which section of the page gets screenshotted.
-
-### Files
-
-- **`.ui-verify/scroll-targets.json`** — maps named keys to CSS selectors (or `null` / `"__BOTTOM__"`).
-- **`.ui-verify/active-target`** — plain text file containing the active key name.
-
-### Available targets
+### Project scroll targets
 
 | Key | Scrolls to |
 |---|---|
@@ -131,17 +90,7 @@ The verification hook uses a file-based registry to control which section of the
 | `step-two` | Step 2 — Diagnosis & Fix |
 | `step-three` | Step 3 — Validation |
 | `output` | Output — Success |
-| `bottom` | Bottom of page (`window.scrollTo(0, document.body.scrollHeight)`) |
-
-### How it works
-
-1. At the start of a UI task, read `.ui-verify/active-target` to understand which section is being verified.
-2. The hook reads the active target key, looks it up in `scroll-targets.json`, and uses that `scrollTo` value instead of parsing `>> .selector` from the contract routes.
-3. If the user says "now work on step two", update `.ui-verify/active-target` to `step-two`.
-4. The contract route should still specify the URL (e.g. `http://localhost:5173/`) but no longer needs `>> .selector` — the registry handles scroll positioning.
-5. If `.ui-verify/active-target` doesn't exist or the key isn't found, the hook falls back to the contract's `>> .selector` (backward compatible).
-
-### Agent-browser manual validation
+| `bottom` | Bottom of page |
 
 Sentinel mapping for scroll targets: nth-child(1)=Step 0, nth-child(2)=Step 1, nth-child(3)=Step 2, nth-child(4)=Step 3, nth-child(5)=Output.
 
